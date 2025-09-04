@@ -1,0 +1,22 @@
+[Unit]
+Description=Claude Process Notifier - Alerts instead of killing
+Documentation=https://github.com/your-org/dashboard
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/srv/projects/shared/dashboard
+ExecStart=/srv/projects/shared/dashboard/scripts/claude-notifier.sh
+Restart=always
+RestartSec=30
+StandardOutput=append:/var/log/claude-notifier.log
+StandardError=append:/var/log/claude-notifier.error.log
+
+# Security settings
+NoNewPrivileges=false
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

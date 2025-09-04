@@ -1,0 +1,54 @@
+[Unit]
+Description=Streamlit Development Dashboard
+Documentation=https://github.com/streamlit/streamlit
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=devadmin
+Group=devadmin
+WorkingDirectory=/srv/projects/shared/dashboard
+
+# Environment setup
+Environment="PATH=/srv/projects/shared/dashboard/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+EnvironmentFile=-/srv/projects/shared/dashboard/.env
+
+# Pre-start checks and preparation
+ExecStartPre=/bin/bash -c 'test -d /srv/projects/shared/dashboard/.venv || (echo "Virtual environment not found" && exit 1)'
+ExecStartPre=/bin/bash -c 'test -f /srv/projects/shared/dashboard/app.py || (echo "App file not found" && exit 1)'
+ExecStartPre=/srv/projects/shared/dashboard/.venv/bin/python -m pip install --quiet --upgrade streamlit
+
+# Main service command
+ExecStart=/srv/projects/shared/dashboard/.venv/bin/streamlit run app.py \
+    --server.port=8081 \
+    --server.address=0.0.0.0 \
+    --browser.gatherUsageStats=false \
+    --server.headless=true
+
+# Process management
+Restart=always
+RestartSec=10
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/srv/projects/shared/dashboard
+ReadWritePaths=/var/log
+ProtectHome=false
+
+# Resource limits
+LimitNOFILE=65536
+MemoryMax=1G
+
+# Logging
+StandardOutput=append:/var/log/streamlit-dashboard.log
+StandardError=append:/var/log/streamlit-dashboard.error.log
+SyslogIdentifier=streamlit-dashboard
+
+[Install]
+WantedBy=multi-user.target

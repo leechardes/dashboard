@@ -1,0 +1,61 @@
+{
+  "version": "1.0",
+  "last_updated": "2025-09-02T20:58:13.069146",
+  "global_settings": {
+    "default_memory_limit_mb": 8192,
+    "max_process_age_hours": 24,
+    "auto_cleanup_enabled": false,
+    "auto_cleanup_interval_minutes": 60,
+    "orphan_cleanup_enabled": false,
+    "alert_memory_threshold_mb": 6144,
+    "alert_cpu_threshold_percent": 80,
+    "max_processes_per_user": 10,
+    "enable_notifications": true,
+    "log_retention_days": 7,
+    "alert_instead_of_kill": true,
+    "send_terminal_alerts": true
+  },
+  "user_limits": {
+    "default": {
+      "memory_limit_mb": 8192,
+      "max_processes": 5,
+      "max_runtime_hours": 24,
+      "priority": "normal",
+      "alert_on_long_running": true,
+      "alert_after_hours": 4
+    },
+    "devadmin": {
+      "memory_limit_mb": 8192,
+      "max_processes": 5,
+      "max_runtime_hours": 24,
+      "priority": "normal"
+    },
+    "diego": {
+      "memory_limit_mb": 8192,
+      "max_processes": 5,
+      "max_runtime_hours": 24,
+      "priority": "normal"
+    }
+  },
+  "monitoring": {
+    "refresh_interval_seconds": 5,
+    "history_retention_hours": 24,
+    "enable_metrics_collection": true,
+    "alert_on_memory_spike": true,
+    "alert_on_orphan_process": true
+  },
+  "security": {
+    "require_confirmation_for_kill_all": true,
+    "require_confirmation_for_user_kill": true,
+    "enable_action_logging": true,
+    "restrict_user_access": false,
+    "allowed_users": []
+  },
+  "ui": {
+    "theme": "light",
+    "auto_refresh_enabled": true,
+    "show_advanced_metrics": true,
+    "items_per_page": 50,
+    "default_sort": "memory_desc"
+  }
+}
