@@ -13,14 +13,14 @@ def get_all_repositories():
 def categorize_repositories(repos):
     """Categorize repositories by type and project"""
     categories = {
-        'apis': {'name': 'APIs', 'repos': [], 'icon': '🔌', 'keywords': ['api', 'gateway', 'auth', 'metadata']},
-        'web': {'name': 'Web', 'repos': [], 'icon': '🌐', 'keywords': ['web', 'angular', 'react', 'vue']},
-        'mobile': {'name': 'Mobile', 'repos': [], 'icon': '📱', 'keywords': ['mobile', 'flutter', 'android', 'ios']},
-        'desktop': {'name': 'Desktop', 'repos': [], 'icon': '🖥️', 'keywords': ['desktop', 'electron']},
-        'services': {'name': 'Services', 'repos': [], 'icon': '⚙️', 'keywords': ['service', 'worker', 'job', 'mcp']},
-        'libs': {'name': 'Libraries', 'repos': [], 'icon': '📚', 'keywords': ['lib', 'library', 'util', 'helper']},
-        'dashboards': {'name': 'Dashboards', 'repos': [], 'icon': '📊', 'keywords': ['dashboard', 'streamlit', 'panel']},
-        'others': {'name': 'Outros', 'repos': [], 'icon': '📦', 'keywords': []}
+        'apis': {'name': 'APIs', 'repos': [], 'icon': 'api', 'keywords': ['api', 'gateway', 'auth', 'metadata']},
+        'web': {'name': 'Web', 'repos': [], 'icon': 'public', 'keywords': ['web', 'angular', 'react', 'vue']},
+        'mobile': {'name': 'Mobile', 'repos': [], 'icon': 'smartphone', 'keywords': ['mobile', 'flutter', 'android', 'ios']},
+        'desktop': {'name': 'Desktop', 'repos': [], 'icon': 'computer', 'keywords': ['desktop', 'electron']},
+        'services': {'name': 'Services', 'repos': [], 'icon': 'settings', 'keywords': ['service', 'worker', 'job', 'mcp']},
+        'libs': {'name': 'Libraries', 'repos': [], 'icon': 'library_books', 'keywords': ['lib', 'library', 'util', 'helper']},
+        'dashboards': {'name': 'Dashboards', 'repos': [], 'icon': 'dashboard', 'keywords': ['dashboard', 'streamlit', 'panel']},
+        'others': {'name': 'Outros', 'repos': [], 'icon': 'inventory_2', 'keywords': []}
     }
     
     # Categorize by path and name patterns
@@ -79,17 +79,17 @@ def organize_by_project(repos):
 
 def display_repository_card(repo, index):
     """Display a repository card with complete information"""
-    with st.expander(f"{repo.get('icon', '📁')} **{repo['name']}**", expanded=False):
+    with st.expander(f"**{repo['name']}**", expanded=False):
         
         # Repository info columns
         info_col1, info_col2 = st.columns(2)
         
         with info_col1:
             st.info(f"""
-            **📂 Nome:** {repo['name']}
-            **🗂️ Caminho:** {repo['path']}
-            **🌿 Branch Atual:** {repo.get('current_branch', 'N/A')}
-            **📏 Tamanho:** {repo.get('size_mb', 0):.1f} MB
+            **Nome:** {repo['name']}
+            **Caminho:** {repo['path']}
+            **Branch Atual:** {repo.get('current_branch', 'N/A')}
+            **Tamanho:** {repo.get('size_mb', 0):.1f} MB
             """)
         
         with info_col2:
@@ -98,13 +98,13 @@ def display_repository_card(repo, index):
                 status = get_repo_status(repo['path'])
                 
                 # Status indicators
-                status_text = "✅ Limpo" if status.get('is_clean', False) else "⚠️ Modificado"
+                status_text = "Limpo" if status.get('is_clean', False) else "Modificado"
                 
                 st.info(f"""
-                **🔄 Status:** {status_text}
-                **📝 Commits:** {status.get('commit_count', 'N/A')}
-                **🏷️ Tags:** {status.get('tag_count', 'N/A')}
-                **🌿 Branches:** {len(status.get('branches', []))}
+                **Status:** {status_text}
+                **Commits:** {status.get('commit_count', 'N/A')}
+                **Tags:** {status.get('tag_count', 'N/A')}
+                **Branches:** {len(status.get('branches', []))}
                 """)
                 
             except Exception as e:
@@ -115,30 +115,30 @@ def display_repository_card(repo, index):
         st.markdown("---")
         
         # Tabs for different info
-        tab1, tab2, tab3, tab4 = st.tabs(["📊 Status", "🌿 Branches", "📋 Commits", "📁 Arquivos"])
+        tab1, tab2, tab3, tab4 = st.tabs(["Status", "Branches", "Commits", "Arquivos"])
         
         with tab1:
             try:
                 if not status.get('is_clean', True):
                     if status.get('modified_files'):
-                        st.subheader("📝 Arquivos Modificados")
+                        st.subheader("Arquivos Modificados")
                         for file in status['modified_files']:
                             if file:  # Only show non-empty files
                                 st.text(f"• {file}")
                     
                     if status.get('untracked_files'):
-                        st.subheader("➕ Arquivos Não Rastreados")
+                        st.subheader("Arquivos Não Rastreados")
                         for file in status['untracked_files']:
                             if file:  # Only show non-empty files
                                 st.text(f"• {file}")
                     
                     if status.get('staged_files'):
-                        st.subheader("✅ Arquivos Staged")
+                        st.subheader("Arquivos Staged")
                         for file in status['staged_files']:
                             if file:  # Only show non-empty files
                                 st.text(f"• {file}")
                 else:
-                    st.success("✅ Repositório limpo - sem modificações pendentes")
+                    st.success("Repositório limpo - sem modificações pendentes")
             
             except Exception as e:
                 st.error(f"Erro ao obter status detalhado: {str(e)}")
@@ -149,9 +149,9 @@ def display_repository_card(repo, index):
                 branches = info.get('branches', [])
                 
                 if branches:
-                    st.subheader("🌿 Branches Disponíveis")
+                    st.subheader("Branches Disponíveis")
                     for branch in branches:
-                        current = "👉 " if branch == repo.get('current_branch') else "   "
+                        current = "→ " if branch == repo.get('current_branch') else "  "
                         st.text(f"{current}{branch}")
                 else:
                     st.info("Nenhuma branch encontrada")
@@ -165,7 +165,7 @@ def display_repository_card(repo, index):
                 commits = info.get('recent_commits', [])
                 
                 if commits:
-                    st.subheader("📋 Commits Recentes")
+                    st.subheader("Commits Recentes")
                     for commit in commits[:10]:  # Show last 10 commits
                         st.text(f"• {commit}")
                 else:
@@ -182,16 +182,16 @@ def display_repository_card(repo, index):
                 files.sort()
                 
                 if files:
-                    st.subheader("📁 Estrutura do Projeto")
+                    st.subheader("Estrutura do Projeto")
                     
                     # Show in columns
                     cols = st.columns(3)
                     for file_idx, file in enumerate(files):
                         with cols[file_idx % 3]:
                             if os.path.isdir(os.path.join(repo['path'], file)):
-                                st.text(f"📁 {file}/")
+                                st.text(f"[DIR] {file}/")
                             else:
-                                st.text(f"📄 {file}")
+                                st.text(f"[FILE] {file}")
                 else:
                     st.info("Diretório vazio")
             
@@ -203,11 +203,11 @@ def display_repository_card(repo, index):
         action_col1, action_col2, action_col3, action_col4 = st.columns(4)
         
         with action_col1:
-            if st.button(f"📂 Abrir", key=f"open_{index}_{repo['name']}"):
+            if st.button(f"Abrir", key=f"open_{index}_{repo['name']}"):
                 st.info(f"Caminho: {repo['path']}")
         
         with action_col2:
-            if st.button(f"🔄 Status", key=f"status_{index}_{repo['name']}"):
+            if st.button(f"Status", key=f"status_{index}_{repo['name']}"):
                 try:
                     result = subprocess.run(
                         ['git', 'status', '--porcelain'],
@@ -223,7 +223,7 @@ def display_repository_card(repo, index):
                     st.error(f"Erro: {str(e)}")
         
         with action_col3:
-            if st.button(f"⬇️ Pull", key=f"pull_{index}_{repo['name']}"):
+            if st.button(f"Pull", key=f"pull_{index}_{repo['name']}"):
                 try:
                     with st.spinner("Fazendo git pull..."):
                         result = subprocess.run(
@@ -234,20 +234,20 @@ def display_repository_card(repo, index):
                             timeout=30
                         )
                         if result.returncode == 0:
-                            st.success("✅ Pull realizado com sucesso!")
+                            st.success("Pull realizado com sucesso!")
                             if result.stdout:
                                 st.code(result.stdout, language='bash')
                         else:
-                            st.error("❌ Erro ao fazer pull")
+                            st.error("Erro ao fazer pull")
                             if result.stderr:
                                 st.code(result.stderr, language='bash')
                 except subprocess.TimeoutExpired:
-                    st.error("⏱️ Timeout - operação demorou muito")
+                    st.error("Timeout - operação demorou muito")
                 except Exception as e:
                     st.error(f"Erro: {str(e)}")
         
         with action_col4:
-            if st.button(f"🌐 Remote", key=f"remote_{index}_{repo['name']}"):
+            if st.button(f"Remote", key=f"remote_{index}_{repo['name']}"):
                 try:
                     result = subprocess.run(
                         ['git', 'remote', '-v'],
@@ -265,7 +265,7 @@ def display_repository_card(repo, index):
 def run():
     """Git repositories management view with improved organization"""
     
-    st.markdown('<div class="main-header">📁 Gerenciador de Repositórios</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header">Gerenciador de Repositórios</div>', unsafe_allow_html=True)
     
     # Scan for repositories
     with st.spinner("Escaneando repositórios Git..."):
@@ -279,12 +279,12 @@ def run():
     # Display mode selector
     display_mode = st.radio(
         "Modo de visualização:",
-        ["📊 Por Categoria", "🏗️ Por Projeto", "📋 Lista Simples"],
+        ["Por Categoria", "Por Projeto", "Lista Simples"],
         horizontal=True
     )
     
     # Statistics
-    st.markdown("### 📈 Estatísticas")
+    st.markdown("### Estatísticas")
     stat_cols = st.columns(6)
     
     with stat_cols[0]:
@@ -295,7 +295,7 @@ def run():
     for i, (cat_key, cat_info) in enumerate(categories.items(), 1):
         if i < len(stat_cols):
             with stat_cols[i]:
-                st.metric(f"{cat_info['icon']} {cat_info['name']}", len(cat_info['repos']))
+                st.metric(f"{cat_info['name']}", len(cat_info['repos']))
     
     st.markdown("---")
     
@@ -303,13 +303,13 @@ def run():
     col1, col2, col3 = st.columns([2, 1, 1])
     
     with col1:
-        search_term = st.text_input("🔍 Buscar repositório", placeholder="Digite o nome...")
+        search_term = st.text_input("Buscar repositório", placeholder="Digite o nome...")
     
     with col2:
-        if display_mode == "📊 Por Categoria":
+        if display_mode == "Por Categoria":
             selected_category = st.selectbox(
                 "Categoria",
-                ["Todas"] + [f"{cat_info['icon']} {cat_info['name']}" for cat_info in categories.values()]
+                ["Todas"] + [f"{cat_info['name']}" for cat_info in categories.values()]
             )
         else:
             selected_category = "Todas"
@@ -343,16 +343,16 @@ def run():
         ]
     
     # Display repositories based on selected mode
-    if display_mode == "📊 Por Categoria":
+    if display_mode == "Por Categoria":
         # Display by category
         categories = categorize_repositories(filtered_repos)
         
         for cat_key, cat_info in categories.items():
-            if selected_category != "Todas" and f"{cat_info['icon']} {cat_info['name']}" != selected_category:
+            if selected_category != "Todas" and f"{cat_info['name']}" != selected_category:
                 continue
                 
             if cat_info['repos']:
-                st.markdown(f"### {cat_info['icon']} {cat_info['name']} ({len(cat_info['repos'])})")
+                st.markdown(f"### {cat_info['name']} ({len(cat_info['repos'])})")
                 
                 # Create columns for better layout
                 for i in range(0, len(cat_info['repos']), 2):
@@ -366,7 +366,7 @@ def run():
                 
                 st.markdown("---")
     
-    elif display_mode == "🏗️ Por Projeto":
+    elif display_mode == "Por Projeto":
         # Display by project hierarchy
         projects = organize_by_project(filtered_repos)
         
@@ -375,15 +375,15 @@ def run():
         
         for project_name, project_data in sorted_projects:
             if project_name == 'others':
-                project_display_name = "📦 Outros"
+                project_display_name = "Outros"
             else:
                 project_display_name = project_name.replace('_', ' ').title()
                 if 'i9_smart' in project_name:
-                    project_display_name = f"🏢 {project_display_name}"
+                    project_display_name = f"[CORP] {project_display_name}"
                 elif 'devflow' in project_name:
-                    project_display_name = f"🔧 {project_display_name}"
+                    project_display_name = f"[DEV] {project_display_name}"
                 elif 'asfrete' in project_name:
-                    project_display_name = f"🚚 {project_display_name}"
+                    project_display_name = f"[LOG] {project_display_name}"
             
             # Count total repos in project
             total_in_project = len(project_data['repos'])
@@ -397,21 +397,21 @@ def run():
                 if category_repos:
                     # Determine category icon
                     cat_icon = {
-                        'apis': '🔌',
-                        'web': '🌐',
-                        'mobile': '📱',
-                        'desktop': '🖥️',
-                        'services': '⚙️'
-                    }.get(category_name, '📁')
+                        'apis': 'api',
+                        'web': 'public',
+                        'mobile': 'smartphone',
+                        'desktop': 'computer',
+                        'services': 'settings'
+                    }.get(category_name, 'folder')
                     
-                    with st.expander(f"{cat_icon} {category_name.upper()} ({len(category_repos)})", expanded=True):
+                    with st.expander(f"{category_name.upper()} ({len(category_repos)})", expanded=True):
                         for repo in category_repos:
                             repo['icon'] = cat_icon
                             display_repository_card(repo, 0)
             
             # Display uncategorized repos in project
             if project_data['repos']:
-                with st.expander(f"📁 Outros ({len(project_data['repos'])})", expanded=True):
+                with st.expander(f"Outros ({len(project_data['repos'])})", expanded=True):
                     for repo in project_data['repos']:
                         display_repository_card(repo, 0)
             
@@ -419,7 +419,7 @@ def run():
     
     else:
         # Simple list mode
-        st.markdown(f"### 📋 Lista de Repositórios ({len(filtered_repos)})")
+        st.markdown(f"### Lista de Repositórios ({len(filtered_repos)})")
         
         for i, repo in enumerate(filtered_repos):
             display_repository_card(repo, i)
@@ -428,6 +428,6 @@ def run():
     st.markdown("---")
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        if st.button("🔄 Atualizar Repositórios", use_container_width=True):
+        if st.button("Atualizar Repositórios", use_container_width=True):
             st.cache_data.clear()
             st.rerun()
