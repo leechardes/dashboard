@@ -12,7 +12,7 @@ def run():
     st.markdown('<div class="main-header"><span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem;">desktop_windows</span>Informações Detalhadas do Sistema</div>', unsafe_allow_html=True)
     
     # Refresh button
-    if st.sidebar.button("🔄 Atualizar Informações"):  # Keep emoji for button compatibility
+    if st.sidebar.button(":material/refresh: Atualizar Informações"):
         st.rerun()
     
     # System overview
@@ -23,11 +23,11 @@ def run():
     with col1:
         # Basic system info
         st.info(f"""
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>home</span> Hostname:** {socket.gethostname()}
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>desktop_windows</span> Sistema:** {platform.system()} {platform.release()}
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>construction</span> Arquitetura:** {platform.machine()}
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>code</span> Python:** {platform.python_version()}
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>person</span> Usuário:** {os.getenv('USER', 'N/A')}
+        **Hostname:** {socket.gethostname()}
+        **Sistema:** {platform.system()} {platform.release()}
+        **Arquitetura:** {platform.machine()}
+        **Python:** {platform.python_version()}
+        **Usuário:** {os.getenv('USER', 'N/A')}
         """)
     
     with col2:
@@ -36,11 +36,11 @@ def run():
         uptime = datetime.datetime.now() - boot_time
         
         st.info(f"""
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>access_time</span> Boot Time:** {boot_time.strftime('%Y-%m-%d %H:%M:%S')}
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>schedule</span> Uptime:** {uptime.days} dias, {uptime.seconds//3600}h {(uptime.seconds//60)%60}m
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>public</span> IP Local:** {socket.gethostbyname(socket.gethostname())}
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>build</span> PID Atual:** {os.getpid()}
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>folder</span> Working Dir:** {os.getcwd()}
+        **Boot Time:** {boot_time.strftime('%Y-%m-%d %H:%M:%S')}
+        **Uptime:** {uptime.days} dias, {uptime.seconds//3600}h {(uptime.seconds//60)%60}m
+        **IP Local:** {socket.gethostbyname(socket.gethostname())}
+        **PID Atual:** {os.getpid()}
+        **Working Dir:** {os.getcwd()}
         """)
     
     # Hardware Information
@@ -110,14 +110,14 @@ def run():
             col1, col2, col3 = st.columns(3)
             
             with col1:
-                st.metric("💽 Total", f"{partition_usage.total / (1024**3):.1f} GB")  # Keep emoji for metric compatibility
+                st.metric("Total", f"{partition_usage.total / (1024**3):.1f} GB")
             
             with col2:
-                st.metric("✅ Livre", f"{partition_usage.free / (1024**3):.1f} GB")
+                st.metric("Livre", f"{partition_usage.free / (1024**3):.1f} GB")
             
             with col3:
                 used_percent = (partition_usage.used / partition_usage.total) * 100
-                st.metric("⚠️ Usado", f"{used_percent:.1f}%")  # Keep emoji for metric compatibility
+                st.metric("Usado", f"{used_percent:.1f}%")
             
             # Progress bar for disk usage
             st.progress(used_percent/100)
@@ -202,7 +202,7 @@ def run():
         running_processes = len([p for p in psutil.process_iter() if p.status() == 'running'])
         sleeping_processes = len([p for p in psutil.process_iter() if p.status() == 'sleeping'])
         
-        st.metric("📊 Total de Processos", total_processes)  # Keep emoji for metric compatibility
+        st.metric("Total de Processos", total_processes)
         st.metric("🏃 Em Execução", running_processes)
         st.metric("😴 Dormindo", sleeping_processes)
     
@@ -230,7 +230,7 @@ def run():
     try:
         load_avg = os.getloadavg()
         st.markdown("---")
-        st.subheader("📈 Carga do Sistema")
+        st.subheader("Carga do Sistema")
         
         load_col1, load_col2, load_col3 = st.columns(3)
         
@@ -277,7 +277,7 @@ def run():
         st.rerun()
     
     # Export system info
-    if st.sidebar.button("💾 Exportar Info Sistema"):  # Keep emoji for button compatibility
+    if st.sidebar.button(":material/save: Exportar Info Sistema"):
         system_info = get_detailed_system_info()
         
         # Create comprehensive system report

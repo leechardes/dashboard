@@ -111,11 +111,11 @@ def run():
     
     # Log file info
     st.info(f"""
-    **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>description</span> Arquivo:** {selected_log['name']}
-    **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>folder_open</span> Caminho:** {selected_log['path']}
-    **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>straighten</span> Tamanho:** {selected_log['size'] / 1024:.1f} KB
-    **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>schedule</span> Modificado:** {selected_log['modified']}
-    **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>label</span> Fonte:** {selected_log['source']}
+    **Arquivo:** {selected_log['name']}
+    **Caminho:** {selected_log['path']}
+    **Tamanho:** {selected_log['size'] / 1024:.1f} KB
+    **Modificado:** {selected_log['modified']}
+    **Fonte:** {selected_log['source']}
     """)
     
     # Display options
