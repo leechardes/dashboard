@@ -22,7 +22,7 @@ def create_system_metrics():
     
     with col1:
         cpu_percent = psutil.cpu_percent(interval=1)
-        create_metric_card("CPU Usage", f"{cpu_percent}%", "desktop_windows")
+        create_metric_card("Uso CPU", f"{cpu_percent}%", "desktop_windows")
     
     with col2:
         memory = psutil.virtual_memory()
@@ -81,7 +81,7 @@ def create_info_grid(data, columns=2):
 
 def create_expandable_metric(title, value, details, icon="analytics"):
     """Create an expandable metric card with details"""
-    with st.expander(f"{title}: {value}"):  # Using emoji temporarily for expander compatibility
+    with st.expander(f"{title}: {value}"):
         if isinstance(details, dict):
             for key, val in details.items():
                 st.text(f"{key}: {val}")
@@ -146,7 +146,7 @@ def create_gauge_metric(title, value, max_value, icon="analytics", color_thresho
                 <div style="background: {color}; height: 100%; width: {percentage}%;"></div>
             </div>
             <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.3rem;">
-                {percentage:.1f}% of {max_value}
+                {percentage:.1f}% de {max_value}
             </div>
         </div>
     </div>
@@ -216,7 +216,7 @@ def create_alert_metric(title, message, alert_type="info", icon=None):
 def create_trend_metric(title, values, labels=None, icon="analytics"):
     """Create a simple trend metric with sparkline-like display"""
     if not values:
-        st.warning(f"{title}: Nenhum dado disponível")  # Using emoji for warning compatibility
+        st.warning(f"{title}: Nenhum dado disponível")
         return
     
     # Calculate trend

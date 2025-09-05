@@ -7,7 +7,7 @@ from datetime import datetime
 def run():
     """Settings page for managing project paths configuration"""
     
-    st.markdown('<div class="main-header"><span class="material-symbols-outlined">settings</span> Settings</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header"><span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem; color: var(--info-color);">settings</span>Configurações</div>', unsafe_allow_html=True)
     
     # Configuration file path
     config_file = Path("/srv/projects/shared/config/project-paths.json")
@@ -39,14 +39,14 @@ def run():
         }
     
     # Create tabs
-    tab1, tab2, tab3 = st.tabs(["Project Paths", "General Settings", "Statistics"])
+    tab1, tab2, tab3 = st.tabs(["Caminhos dos Projetos", "Configurações Gerais", "Estatísticas"])
     
     with tab1:
-        st.subheader("Project Paths Configuration")
-        st.info("Configure which directories contain projects to be documented")
+        st.subheader("Configuração de Caminhos dos Projetos")
+        st.info("Configure quais diretórios contêm projetos a serem documentados")
         
         # Current paths
-        st.markdown("### Current Paths")
+        st.markdown("### Caminhos Atuais")
         
         paths_modified = False
         updated_paths = []
@@ -63,23 +63,23 @@ def run():
                     
                     col1a, col1b, col1c = st.columns(3)
                     with col1a:
-                        new_enabled = st.checkbox("Enabled", value=path_config["enabled"], key=f"enabled_{idx}")
+                        new_enabled = st.checkbox("Habilitado", value=path_config["enabled"], key=f"enabled_{idx}")
                     with col1b:
-                        new_auto = st.checkbox("Auto Discover", value=path_config["auto_discover"], key=f"auto_{idx}")
+                        new_auto = st.checkbox("Descoberta Automática", value=path_config["auto_discover"], key=f"auto_{idx}")
                     with col1c:
-                        new_color = st.color_picker("Color", value=path_config.get("color", "#2196f3"), key=f"color_{idx}")
+                        new_color = st.color_picker("Cor", value=path_config.get("color", "#2196f3"), key=f"color_{idx}")
                 
                 with col2:
-                    st.markdown("### Actions")
-                    if st.button("Remove", key=f"remove_{idx}", use_container_width=True):
+                    st.markdown("### Ações")
+                    if st.button(":material/delete: Remover", key=f"remove_{idx}"):
                         paths_modified = True
                         continue  # Skip this path
                     
                     # Check if path exists
                     if os.path.exists(new_path):
-                        st.success("Path exists")
+                        st.success("Caminho existe")
                     else:
-                        st.error("Path not found")
+                        st.error("Caminho não encontrado")
                 
                 # Update path config if changed
                 if (new_id != path_config["id"] or 
@@ -100,26 +100,26 @@ def run():
                 })
         
         # Add new path section
-        st.markdown("### Add New Path")
+        st.markdown("### Adicionar Novo Caminho")
         with st.form("add_path_form"):
             col1, col2 = st.columns([4, 1])
             
             with col1:
-                new_path_input = st.text_input("Project Path", placeholder="/srv/projects/example")
+                new_path_input = st.text_input("Caminho do Projeto", placeholder="/srv/projects/example")
                 new_id_input = st.text_input("ID", placeholder="example")
-                new_desc_input = st.text_input("Description", placeholder="Example projects")
+                new_desc_input = st.text_input("Descrição", placeholder="Projetos de exemplo")
                 
                 col1a, col1b = st.columns(2)
                 with col1a:
-                    new_enabled_input = st.checkbox("Enabled", value=True)
+                    new_enabled_input = st.checkbox("Habilitado", value=True)
                 with col1b:
-                    new_auto_input = st.checkbox("Auto Discover", value=True)
+                    new_auto_input = st.checkbox("Descoberta Automática", value=True)
                 
-                new_color_input = st.color_picker("Color", value="#4caf50")
+                new_color_input = st.color_picker("Cor", value="#4caf50")
             
             with col2:
                 st.markdown("&nbsp;")  # Spacing
-                if st.form_submit_button("Add Path", use_container_width=True, type="primary"):
+                if st.form_submit_button(":material/add: Adicionar Caminho", type="primary"):
                     if new_path_input and new_id_input:
                         updated_paths.append({
                             "id": new_id_input,
@@ -130,44 +130,44 @@ def run():
                             "color": new_color_input
                         })
                         paths_modified = True
-                        st.success(f"Added path: {new_path_input}")
+                        st.success(f"Caminho adicionado: {new_path_input}")
                         st.rerun()
                     else:
-                        st.error("Please provide both ID and Path")
+                        st.error("Por favor, forneça tanto o ID quanto o Caminho")
         
         # Update config if paths were modified
         if paths_modified:
             config["paths"] = updated_paths
     
     with tab2:
-        st.subheader("General Settings")
+        st.subheader("Configurações Gerais")
         
         # Max depth setting
         new_max_depth = st.number_input(
-            "Max Search Depth",
+            "Profundidade Máxima de Busca",
             min_value=1,
             max_value=10,
             value=config["settings"].get("max_depth", 5),
-            help="Maximum directory depth to search for projects"
+            help="Profundidade máxima de diretórios para buscar projetos"
         )
         
         # Template directory
         new_template_dir = st.text_input(
-            "Templates Directory",
+            "Diretório de Templates",
             value=config["settings"].get("template_dir", "/srv/projects/shared/scripts/docs-templates"),
-            help="Directory containing documentation templates"
+            help="Diretório contendo templates de documentação"
         )
         
         # Exclude patterns
-        st.markdown("### Exclude Patterns")
-        st.info("Directories matching these patterns will be excluded from search")
+        st.markdown("### Padrões de Exclusão")
+        st.info("Diretórios que correspondem a estes padrões serão excluídos da busca")
         
         exclude_patterns = config["settings"].get("exclude_patterns", [])
         new_patterns = st.text_area(
-            "Patterns (one per line)",
+            "Padrões (um por linha)",
             value="\n".join(exclude_patterns),
             height=150,
-            help="Enter directory names to exclude, one per line"
+            help="Digite nomes de diretórios para excluir, um por linha"
         )
         
         # Update settings
@@ -176,25 +176,25 @@ def run():
         config["settings"]["exclude_patterns"] = [p.strip() for p in new_patterns.split("\n") if p.strip()]
     
     with tab3:
-        st.subheader("Configuration Statistics")
+        st.subheader("Estatísticas da Configuração")
         
         # Display statistics
         col1, col2, col3 = st.columns(3)
         
         with col1:
             total_paths = len(config["paths"])
-            st.metric("Total Paths", total_paths)
+            st.metric("Total de Caminhos", total_paths)
         
         with col2:
             enabled_paths = sum(1 for p in config["paths"] if p["enabled"])
-            st.metric("Enabled Paths", enabled_paths)
+            st.metric("Caminhos Habilitados", enabled_paths)
         
         with col3:
             auto_discover = sum(1 for p in config["paths"] if p["auto_discover"])
-            st.metric("Auto Discover", auto_discover)
+            st.metric("Descoberta Automática", auto_discover)
         
         # Path details table
-        st.markdown("### Path Details")
+        st.markdown("### Detalhes dos Caminhos")
         
         if config["paths"]:
             import pandas as pd
@@ -216,28 +216,28 @@ def run():
                 df_data.append({
                     "ID": path["id"],
                     "Path": path["path"],
-                    "Enabled": "Sim" if path["enabled"] else "Não",
+                    "Habilitado": "Sim" if path["enabled"] else "Não",
                     "Auto": "Sim" if path["auto_discover"] else "Não",
-                    "Exists": "Sim" if os.path.exists(path["path"]) else "Não",
-                    "Projects": project_count if project_count >= 0 else "Error"
+                    "Existe": "Sim" if os.path.exists(path["path"]) else "Não",
+                    "Projetos": project_count if project_count >= 0 else "Erro"
                 })
             
             df = pd.DataFrame(df_data)
-            st.dataframe(df, use_container_width=True, hide_index=True)
+            st.dataframe(df, width=None, hide_index=True)
         
         # Configuration info
-        st.markdown("### Configuration File")
+        st.markdown("### Arquivo de Configuração")
         st.code(str(config_file), language="text")
         
-        st.markdown("### Last Updated")
-        st.text(config.get("last_updated", "Unknown"))
+        st.markdown("### Última Atualização")
+        st.text(config.get("last_updated", "Desconhecido"))
     
     # Save button (fixed at bottom)
     st.markdown("---")
     col1, col2, col3 = st.columns([2, 1, 2])
     
     with col2:
-        if st.button("Save Configuration", use_container_width=True, type="primary"):
+        if st.button(":material/save: Salvar Configuração", type="primary"):
             try:
                 # Update timestamp
                 config["last_updated"] = datetime.now().isoformat() + "Z"
@@ -249,10 +249,10 @@ def run():
                 with open(config_file, 'w') as f:
                     json.dump(config, f, indent=2)
                 
-                st.success("Configuration saved successfully!")
+                st.success("Configuração salva com sucesso!")
                 
                 # Show which scripts will be affected
-                with st.expander("Affected Scripts", expanded=True):
+                with st.expander("Scripts Afetados", expanded=True):
                     scripts = [
                         "discover-projects-to-document.sh",
                         "populate-verification-json.sh",
@@ -262,15 +262,15 @@ def run():
                         "update-agents-template.sh"
                     ]
                     
-                    st.info("The following scripts will use the new configuration:")
+                    st.info("Os seguintes scripts usarão a nova configuração:")
                     for script in scripts:
                         st.text(f"• {script}")
                 
                 st.balloons()
                 
             except Exception as e:
-                st.error(f"Error saving configuration: {str(e)}")
+                st.error(f"Erro ao salvar configuração: {str(e)}")
     
     # Display current configuration (debug)
-    with st.expander("View Raw Configuration", expanded=False):
+    with st.expander("Ver Configuração Bruta", expanded=False):
         st.json(config)

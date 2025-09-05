@@ -13,7 +13,7 @@ def get_log_files():
 def run():
     """Log viewer and analyzer"""
     
-    st.markdown('<div class="main-header">Visualizador de Logs</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header"><span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem; color: var(--info-color);">description</span>Visualizador de Logs</div>', unsafe_allow_html=True)
     
     # Get log files
     with st.spinner("Escaneando arquivos de log..."):
@@ -87,7 +87,7 @@ def run():
         st.metric("Tamanho Total", f"{total_size:.1f} MB")
     
     with col4:
-        if st.button("Atualizar"):
+        if st.button(":material/refresh: Atualizar"):
             st.cache_data.clear()
             st.rerun()
     
@@ -208,11 +208,11 @@ def run():
         st.error(f"Erro ao ler arquivo de log: {str(e)}")
     
     # Download option
-    if st.sidebar.button("Baixar Log"):
+    if st.sidebar.button(":material/download: Baixar Log"):
         try:
             with open(selected_log['path'], 'rb') as f:
                 st.sidebar.download_button(
-                    label="Download Arquivo",
+                    label=":material/file_download: Download Arquivo",
                     data=f.read(),
                     file_name=selected_log['name'],
                     mime="text/plain"

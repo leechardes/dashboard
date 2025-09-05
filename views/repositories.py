@@ -203,11 +203,11 @@ def display_repository_card(repo, index):
         action_col1, action_col2, action_col3, action_col4 = st.columns(4)
         
         with action_col1:
-            if st.button(f"Abrir", key=f"open_{index}_{repo['name']}"):
+            if st.button(f":material/open_in_new: Abrir", key=f"open_{index}_{repo['name']}"):
                 st.info(f"Caminho: {repo['path']}")
         
         with action_col2:
-            if st.button(f"Status", key=f"status_{index}_{repo['name']}"):
+            if st.button(f":material/info: Status", key=f"status_{index}_{repo['name']}"):
                 try:
                     result = subprocess.run(
                         ['git', 'status', '--porcelain'],
@@ -218,12 +218,12 @@ def display_repository_card(repo, index):
                     if result.stdout:
                         st.code(result.stdout, language='bash')
                     else:
-                        st.success("Working directory clean")
+                        st.success("Diretório de trabalho limpo")
                 except Exception as e:
                     st.error(f"Erro: {str(e)}")
         
         with action_col3:
-            if st.button(f"Pull", key=f"pull_{index}_{repo['name']}"):
+            if st.button(f":material/cloud_download: Pull", key=f"pull_{index}_{repo['name']}"):
                 try:
                     with st.spinner("Fazendo git pull..."):
                         result = subprocess.run(
@@ -247,7 +247,7 @@ def display_repository_card(repo, index):
                     st.error(f"Erro: {str(e)}")
         
         with action_col4:
-            if st.button(f"Remote", key=f"remote_{index}_{repo['name']}"):
+            if st.button(f":material/cloud: Remote", key=f"remote_{index}_{repo['name']}"):
                 try:
                     result = subprocess.run(
                         ['git', 'remote', '-v'],
@@ -265,7 +265,7 @@ def display_repository_card(repo, index):
 def run():
     """Git repositories management view with improved organization"""
     
-    st.markdown('<div class="main-header">Gerenciador de Repositórios</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header"><span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem; color: var(--info-color);">source</span>Gerenciador de Repositórios</div>', unsafe_allow_html=True)
     
     # Scan for repositories
     with st.spinner("Escaneando repositórios Git..."):
@@ -428,6 +428,6 @@ def run():
     st.markdown("---")
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        if st.button("Atualizar Repositórios", use_container_width=True):
+        if st.button(":material/refresh: Atualizar Repositórios"):
             st.cache_data.clear()
             st.rerun()
