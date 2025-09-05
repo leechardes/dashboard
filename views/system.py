@@ -160,7 +160,7 @@ def run():
     
     # Active connections
     st.markdown("---")
-    st.subheader("🔗 Conexões Ativas")
+    st.subheader("Conexões Ativas")
     
     show_connections = st.checkbox("Mostrar conexões de rede ativas")
     if show_connections:
@@ -309,7 +309,7 @@ def run():
 """
         
         st.sidebar.download_button(
-            label="📥 Baixar Relatório",
+            label="Baixar Relatório",
             data=report,
             file_name=f"system_report_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
             mime="text/markdown"

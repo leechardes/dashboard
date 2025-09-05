@@ -45,13 +45,13 @@ def format_runtime(minutes):
 def get_status_emoji(process):
     """Retorna emoji baseado no status do processo"""
     if process['is_old']:
-        return "🔴"
+        return "Crítico"
     elif process['is_orphan']:
-        return "⚠️"
+        return "Atenção"
     elif process['memory_mb'] > 1024:
-        return "🟡"
+        return "Antigo"
     else:
-        return "🟢"
+        return "Normal"
 
 def show_confirmation_dialog(title, message, key):
     """Mostra diálogo de confirmação"""
@@ -59,17 +59,17 @@ def show_confirmation_dialog(title, message, key):
         st.session_state[f"show_confirm_{key}"] = False
     
     if st.session_state[f"show_confirm_{key}"]:
-        st.error(f"⚠️ **{title}**")
+        st.error(f"**{title}**")
         st.write(message)
         
         col1, col2, col3 = st.columns(3)
         with col1:
-            if st.button("✅ Confirmar", key=f"confirm_{key}"):
+            if st.button("Confirmar", key=f"confirm_{key}"):
                 st.session_state[f"show_confirm_{key}"] = False
                 st.session_state[f"confirmed_{key}"] = True
                 st.rerun()
         with col2:
-            if st.button("❌ Cancelar", key=f"cancel_{key}"):
+            if st.button("Cancelar", key=f"cancel_{key}"):
                 st.session_state[f"show_confirm_{key}"] = False
                 st.rerun()
         return False
@@ -77,12 +77,12 @@ def show_confirmation_dialog(title, message, key):
     return st.session_state.get(f"confirmed_{key}", False)
 
 # Header principal
-st.title("💻 Claude Process Manager")
+st.title("Claude Process Manager")
 st.markdown("Gerenciamento completo de processos Claude em execução no sistema")
 
 # Sidebar para controles globais
 with st.sidebar:
-    st.header("⚙️ Controles")
+    st.header("Controles")
     
     # Auto-refresh
     st.session_state.auto_refresh = st.checkbox("Auto Refresh", st.session_state.auto_refresh)
@@ -101,17 +101,17 @@ with st.sidebar:
     if st.button("🧹 Limpar Órfãos"):
         success, message, killed_pids = claude_actions.clean_orphan_processes()
         if success:
-            st.success(f"✅ {message}")
+            st.success(f"{message}")
         else:
-            st.error(f"❌ {message}")
+            st.error(f"{message}")
         st.rerun()
     
     if st.button("⏰ Limpar Antigos (>2h)"):
         success, message, killed_pids = claude_actions.clean_old_processes(2)
         if success:
-            st.success(f"✅ {message}")
+            st.success(f"{message}")
         else:
-            st.error(f"❌ {message}")
+            st.error(f"{message}")
         st.rerun()
 
 # Obter dados atualizados
@@ -152,11 +152,11 @@ with col4:
     )
 
 # Tabs principais
-tab1, tab2, tab3, tab4 = st.tabs(["📊 Monitor", "📈 Analytics", "⚙️ Config", "📋 Logs"])
+tab1, tab2, tab3, tab4 = st.tabs(["Monitor", "Analytics", "Config", "Logs"])
 
 # TAB 1: MONITOR
 with tab1:
-    st.header("📊 Monitor de Processos")
+    st.header("Monitor de Processos")
     
     if not processes:
         st.info("😴 Nenhum processo Claude encontrado no sistema")
@@ -166,13 +166,13 @@ with tab1:
         
         with col1:
             users = ["Todos"] + list(set(p['username'] for p in processes))
-            selected_user = st.selectbox("👤 Filtrar por usuário:", users)
+            selected_user = st.selectbox("Filtrar por usuário:", users)
         
         with col2:
-            status_filter = st.selectbox("🔍 Filtrar por status:", ["Todos", "Normais", "Antigos", "Órfãos"])
+            status_filter = st.selectbox("Filtrar por status:", ["Todos", "Normais", "Antigos", "Órfãos"])
         
         with col3:
-            sort_by = st.selectbox("📊 Ordenar por:", ["Memória (desc)", "CPU (desc)", "Tempo (desc)", "PID"])
+            sort_by = st.selectbox("Ordenar por:", ["Memória (desc)", "CPU (desc)", "Tempo (desc)", "PID"])
         
         # Aplicar filtros
         filtered_processes = processes
@@ -243,9 +243,9 @@ with tab1:
                     if st.button(f"🔴 Kill", key=f"kill_{proc['pid']}"):
                         success, message = claude_actions.kill_process(proc['pid'])
                         if success:
-                            st.success(f"✅ {message}")
+                            st.success(f"{message}")
                         else:
-                            st.error(f"❌ {message}")
+                            st.error(f"{message}")
                         time.sleep(1)
                         st.rerun()
                 
@@ -263,9 +263,9 @@ with tab1:
                 ):
                     success, message, killed_pids = claude_actions.kill_user_processes(selected_user)
                     if success:
-                        st.success(f"✅ {message}")
+                        st.success(f"{message}")
                     else:
-                        st.error(f"❌ {message}")
+                        st.error(f"{message}")
                     st.session_state[f"confirmed_kill_user_{selected_user}"] = False
                     st.rerun()
 
@@ -761,9 +761,9 @@ with tab4:
         if st.button("🧹 Limpar Logs Antigos"):
             success, message = claude_actions.clear_old_logs(7)
             if success:
-                st.success(f"✅ {message}")
+                st.success(f"{message}")
             else:
-                st.error(f"❌ {message}")
+                st.error(f"{message}")
             st.rerun()
     
     with col1:

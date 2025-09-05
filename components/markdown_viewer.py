@@ -101,35 +101,35 @@ def apply_markdown_styling(html):
     css = """
     <style>
     .markdown-content {
-        color: #FAFAFA;
+        color: var(--text-color);
         line-height: 1.6;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     }
     
     .markdown-content h1 {
-        color: #FF6B6B;
-        border-bottom: 2px solid #FF6B6B;
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--primary-color);
         padding-bottom: 0.5rem;
         margin-top: 2rem;
         margin-bottom: 1rem;
     }
     
     .markdown-content h2 {
-        color: #4ECDC4;
-        border-bottom: 1px solid #4ECDC4;
+        color: var(--success-color);
+        border-bottom: 1px solid var(--success-color);
         padding-bottom: 0.3rem;
         margin-top: 1.5rem;
         margin-bottom: 0.8rem;
     }
     
     .markdown-content h3 {
-        color: #45B7D1;
+        color: var(--info-color);
         margin-top: 1.2rem;
         margin-bottom: 0.6rem;
     }
     
     .markdown-content h4, .markdown-content h5, .markdown-content h6 {
-        color: #96CEB4;
+        color: var(--text-secondary);
         margin-top: 1rem;
         margin-bottom: 0.5rem;
     }
@@ -149,30 +149,30 @@ def apply_markdown_styling(html):
     }
     
     .markdown-content blockquote {
-        border-left: 4px solid #FF6B6B;
+        border-left: 4px solid var(--primary-color);
         padding-left: 1rem;
         margin: 1rem 0;
-        background: #262730;
+        background: var(--secondary-background-color);
         padding: 1rem;
         border-radius: 5px;
         font-style: italic;
     }
     
     .markdown-content code {
-        background: #262730;
+        background: var(--secondary-background-color);
         padding: 0.2rem 0.4rem;
         border-radius: 3px;
         font-family: 'Monaco', 'Consolas', monospace;
-        color: #FF6B6B;
+        color: var(--primary-color);
     }
     
     .markdown-content pre {
-        background: #1E1E1E;
+        background: var(--secondary-background-color);
         padding: 1rem;
         border-radius: 5px;
         overflow-x: auto;
         margin: 1rem 0;
-        border: 1px solid #333;
+        border: 1px solid var(--border-color);
     }
     
     .markdown-content pre code {
@@ -186,8 +186,8 @@ def apply_markdown_styling(html):
     }
     
     .code-header {
-        background: #FF6B6B;
-        color: white;
+        background: var(--primary-color);
+        color: var(--background-color);
         padding: 0.5rem 1rem;
         border-radius: 5px 5px 0 0;
         font-size: 0.9rem;
@@ -204,14 +204,14 @@ def apply_markdown_styling(html):
         border-collapse: collapse;
         width: 100%;
         margin: 1rem 0;
-        background: #262730;
+        background: var(--secondary-background-color);
         border-radius: 5px;
         overflow: hidden;
     }
     
     .markdown-content th {
-        background: #FF6B6B;
-        color: white;
+        background: var(--primary-color);
+        color: var(--background-color);
         padding: 0.8rem;
         text-align: left;
         font-weight: 600;
@@ -219,27 +219,27 @@ def apply_markdown_styling(html):
     
     .markdown-content td {
         padding: 0.8rem;
-        border-bottom: 1px solid #444;
+        border-bottom: 1px solid var(--border-color);
     }
     
     .markdown-content tr:nth-child(even) {
-        background: #2A2A2A;
+        background: var(--background-color);
     }
     
     .markdown-content a {
-        color: #4ECDC4;
+        color: var(--success-color);
         text-decoration: none;
     }
     
     .markdown-content a:hover {
-        color: #FF6B6B;
+        color: var(--primary-color);
         text-decoration: underline;
     }
     
     .markdown-content hr {
         border: none;
         height: 2px;
-        background: linear-gradient(90deg, #FF6B6B, #4ECDC4, #45B7D1);
+        background: var(--primary-color);
         margin: 2rem 0;
         border-radius: 2px;
     }
@@ -295,8 +295,8 @@ def apply_log_highlighting(content):
     css = """
     <style>
     .log-content {
-        background: #1E1E1E;
-        color: #FAFAFA;
+        background: var(--secondary-background-color);
+        color: var(--text-color);
         padding: 1rem;
         border-radius: 5px;
         font-family: 'Monaco', 'Consolas', monospace;
@@ -307,14 +307,14 @@ def apply_log_highlighting(content):
         word-wrap: break-word;
         max-height: 600px;
         overflow-y: auto;
-        border: 1px solid #333;
+        border: 1px solid var(--border-color);
     }
     
-    .log-error { color: #FF6B6B; font-weight: 600; }
-    .log-warning { color: #FFA726; font-weight: 600; }
-    .log-info { color: #4ECDC4; }
+    .log-error { color: var(--error-color, #ff4444); font-weight: 600; }
+    .log-warning { color: var(--warning-color, #ff9800); font-weight: 600; }
+    .log-info { color: var(--info-color, #2196f3); }
     .log-debug { color: #96CEB4; }
-    .log-timestamp { color: #888; }
+    .log-timestamp { color: var(--text-muted, #888); }
     .log-level { font-weight: 600; }
     </style>
     """
@@ -337,7 +337,7 @@ def create_toc(content):
     if not headers:
         return None
     
-    toc_html = "<div class='toc'><h3>📋 Índice</h3><ul>"
+    toc_html = "<div class='toc'><h3><span class='material-symbols-outlined'>list_alt</span> Índice</h3><ul>"
     
     for level, title in headers:
         # Generate anchor ID
@@ -352,7 +352,7 @@ def create_toc(content):
     toc_css = """
     <style>
     .toc {
-        background: #262730;
+        background: var(--secondary-background-color);
         padding: 1rem;
         border-radius: 5px;
         margin-bottom: 2rem;
@@ -360,7 +360,7 @@ def create_toc(content):
     }
     
     .toc h3 {
-        color: #4ECDC4;
+        color: var(--success-color);
         margin-top: 0;
         margin-bottom: 1rem;
     }
@@ -375,12 +375,12 @@ def create_toc(content):
     }
     
     .toc a {
-        color: #FAFAFA;
+        color: var(--text-color);
         text-decoration: none;
     }
     
     .toc a:hover {
-        color: #FF6B6B;
+        color: var(--primary-color);
         text-decoration: underline;
     }
     </style>
@@ -414,7 +414,7 @@ def search_in_markdown(content, search_term):
     # Highlight search terms
     highlighted = re.sub(
         f'({re.escape(search_term)})',
-        r'<mark style="background: #FF6B6B; color: white; padding: 0.1rem 0.2rem; border-radius: 2px;">\1</mark>',
+        r'<mark style="background: var(--primary-color); color: var(--background-color); padding: 0.1rem 0.2rem; border-radius: 2px;">\1</mark>',
         content,
         flags=re.IGNORECASE
     )
@@ -438,7 +438,7 @@ def get_markdown_stats(content):
 
 def display_markdown_stats(stats):
     """Display markdown statistics"""
-    st.subheader("📊 Estatísticas do Documento")
+    st.subheader("Estatísticas do Documento")
     
     col1, col2, col3, col4 = st.columns(4)
     

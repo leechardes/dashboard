@@ -115,11 +115,11 @@ def save_env_config(config):
 
 def run():
     """Main function for Service Management view"""
-    st.title("🛠️ Service Management")
+    st.title("Service Management")
     st.markdown("Control and configure the dashboard service")
     
     # Create tabs
-    tab1, tab2, tab3, tab4 = st.tabs(["📊 Status", "🎮 Control", "⚙️ Configuration", "📋 Logs"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Status", "Control", "Configuration", "Logs"])
     
     # Tab 1: Status
     with tab1:
@@ -137,9 +137,9 @@ def run():
         
         with col1:
             if status["active"]:
-                st.metric("Status", "🟢 Active")
+                st.metric("Status", "Active")
             else:
-                st.metric("Status", "🔴 Inactive")
+                st.metric("Status", "Inactive")
         
         with col2:
             st.metric("PID", status["pid"] or "N/A")
@@ -152,7 +152,7 @@ def run():
             st.metric("Port", port)
         
         # Show detailed status
-        with st.expander("📝 Detailed Status"):
+        with st.expander("Detailed Status"):
             st.code(status["status_text"])
         
         # Quick info
@@ -171,7 +171,7 @@ def run():
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
-            if st.button("▶️ Start", key="start_service", use_container_width=True):
+            if st.button("Start", key="start_service", use_container_width=True):
                 with st.spinner("Starting service..."):
                     success, stdout, stderr = run_command("sudo systemctl start streamlit-dashboard")
                     if success:
@@ -182,7 +182,7 @@ def run():
                     st.rerun()
         
         with col2:
-            if st.button("⏹️ Stop", key="stop_service", use_container_width=True):
+            if st.button("Stop", key="stop_service", use_container_width=True):
                 if st.checkbox("I'm sure I want to stop the service"):
                     with st.spinner("Stopping service..."):
                         success, stdout, stderr = run_command("sudo systemctl stop streamlit-dashboard")
@@ -205,7 +205,7 @@ def run():
                     st.rerun()
         
         with col4:
-            if st.button("♻️ Reload", key="reload_service", use_container_width=True):
+            if st.button("Reload", key="reload_service", use_container_width=True):
                 with st.spinner("Reloading service..."):
                     success, stdout, stderr = run_command("sudo systemctl reload streamlit-dashboard")
                     if success:
@@ -230,7 +230,7 @@ def run():
             is_enabled = stdout.strip() == "enabled"
             
             if is_enabled:
-                st.success("✅ Auto-start is enabled")
+                st.success("Auto-start is enabled")
                 if st.button("🚫 Disable Auto-start"):
                     success, stdout, stderr = run_command("sudo systemctl disable streamlit-dashboard")
                     if success:
@@ -239,8 +239,8 @@ def run():
                     else:
                         st.error(f"Failed: {stderr}")
             else:
-                st.warning("❌ Auto-start is disabled")
-                if st.button("✅ Enable Auto-start"):
+                st.warning("Auto-start is disabled")
+                if st.button("Enable Auto-start"):
                     success, stdout, stderr = run_command("sudo systemctl enable streamlit-dashboard")
                     if success:
                         st.success("Auto-start enabled")
@@ -256,8 +256,8 @@ def run():
             service_exists = success and "streamlit-dashboard" in stdout
             
             if service_exists:
-                st.success("✅ Service is installed")
-                if st.button("🗑️ Uninstall Service"):
+                st.success("Service is installed")
+                if st.button("Uninstall Service"):
                     if st.checkbox("I understand this will remove the service"):
                         success, stdout, stderr = run_command("cd /srv/projects/shared/dashboard && sudo make uninstall-service")
                         if success:
@@ -266,7 +266,7 @@ def run():
                         else:
                             st.error(f"Failed: {stderr}")
             else:
-                st.warning("❌ Service not installed")
+                st.warning("Service not installed")
                 if st.button("📦 Install Service"):
                     success, stdout, stderr = run_command("cd /srv/projects/shared/dashboard && sudo make install-service")
                     if success:
@@ -325,7 +325,7 @@ def run():
         )
         
         # Save button
-        if st.button("💾 Save Configuration", type="primary"):
+        if st.button("Save Configuration", type="primary"):
             # Update config
             config["STREAMLIT_SERVER_PORT"] = str(new_port)
             config["STREAMLIT_SERVER_ADDRESS"] = new_address
@@ -336,7 +336,7 @@ def run():
             # Save to file
             if save_env_config(config):
                 st.success("Configuration saved successfully!")
-                st.warning("⚠️ You need to restart the service for changes to take effect")
+                st.warning("You need to restart the service for changes to take effect")
                 
                 # Offer to restart
                 if st.button("🔄 Restart Service Now"):
@@ -434,18 +434,18 @@ def run():
                         st.warning("Log file not found")
         
         with col2:
-            if st.button("📥 Download Logs"):
+            if st.button("Download Logs"):
                 success, stdout, stderr = get_logs(lines=1000, service=use_service_logs)
                 if success:
                     st.download_button(
-                        label="💾 Download",
+                        label="Download",
                         data=stdout,
                         file_name=f"dashboard_logs_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log",
                         mime="text/plain"
                     )
         
         with col3:
-            if st.button("🔍 Search in Logs"):
+            if st.button("Search in Logs"):
                 search_term = st.text_input("Search term:")
                 if search_term:
                     success, stdout, stderr = get_logs(lines=500, service=use_service_logs)

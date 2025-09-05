@@ -35,7 +35,7 @@ def render_tree_streamlit(docs):
         if node.get('_type') == 'folder':
             # Count documents in folder
             doc_count = count_docs_in_node(node)
-            folder_icon = "📂" if level == 0 else "📁"
+            folder_icon = "Projeto" if level == 0 else "Pasta"
             
             # Create expander for folder with indentation
             indent = "　" * level  # Using full-width space for better indentation
@@ -53,20 +53,20 @@ def render_tree_streamlit(docs):
             # File node
             doc = node['_doc']
             doc_icons = {
-                'README': '📖',
-                'License': '⚖️',
-                'Changelog': '📝',
-                'TODO': '✅',
-                'API': '🔌',
-                'Guide': '📚',
-                'Docker': '🐳',
-                'Security': '🔒',
-                'FAQ': '❓',
-                'Contributing': '🤝',
-                'Installation': '⚙️',
-                'Configuration': '🔧',
-                'Testing': '🧪',
-                'Environment': '🌍'
+                'README': '',
+                'License': '',
+                'Changelog': '',
+                'TODO': '',
+                'API': '',
+                'Guide': '',
+                'Docker': '',
+                'Security': '',
+                'FAQ': '',
+                'Contributing': '',
+                'Installation': '',
+                'Configuration': '',
+                'Testing': '',
+                'Environment': ''
             }
             doc_icon = doc_icons.get(doc.get('doc_type', 'Documentation'), '📄')
             
@@ -109,7 +109,7 @@ def count_docs_in_node(node):
 
 def render_agent_metrics():
     """Render agent verification metrics"""
-    st.markdown("### 🤖 Agent Documentation Status")
+    st.markdown("### <span class='material-symbols-outlined'>smart_toy</span> Agent Documentation Status", unsafe_allow_html=True)
     
     # Get data
     projects, total_stats = agent_scanner.scan_all_verification_jsons()
@@ -197,7 +197,7 @@ def render_agent_metrics():
                 st.plotly_chart(fig_bar, use_container_width=True)
     
     # Projects table with progress
-    st.markdown("#### 📊 Projects Documentation Status")
+    st.markdown("#### <span class='material-symbols-outlined'>analytics</span> Projects Documentation Status", unsafe_allow_html=True)
     
     if projects:
         df = pd.DataFrame(projects)
@@ -227,14 +227,14 @@ def render_agent_metrics():
 
 def render_action_buttons():
     """Render action buttons for maintenance scripts"""
-    st.markdown("### 🔧 Documentation Maintenance Actions")
+    st.markdown("### <span class='material-symbols-outlined'>build</span> Documentation Maintenance Actions", unsafe_allow_html=True)
     
     scripts_path = Path("/srv/projects/shared/scripts/agents")
     
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.markdown("#### 📝 File Management")
+        st.markdown("#### <span class='material-symbols-outlined'>edit_note</span> File Management", unsafe_allow_html=True)
         
         if st.button("🔄 Standardize Filenames", 
                     use_container_width=True,
@@ -250,23 +250,23 @@ def render_action_buttons():
                             timeout=60
                         )
                         if result.returncode == 0:
-                            st.success("✅ Filenames standardized successfully!")
+                            st.success("Filenames standardized successfully!")
                             if result.stdout:
                                 with st.expander("View details"):
                                     st.code(result.stdout)
                         else:
-                            st.error("❌ Error standardizing filenames")
+                            st.error("Error standardizing filenames")
                             if result.stderr:
                                 st.code(result.stderr)
                     except subprocess.TimeoutExpired:
-                        st.error("⏱️ Operation timed out")
+                        st.error("Operation timed out")
             else:
                 st.error(f"Script not found: {script}")
     
     with col2:
         st.markdown("#### 🔄 Update JSONs")
         
-        if st.button("📊 Update Verification JSONs",
+        if st.button("Update Verification JSONs",
                     use_container_width=True,
                     help="Scan all projects and update verification JSONs"):
             script = scripts_path / "populate-verification-json.sh"
@@ -280,21 +280,21 @@ def render_action_buttons():
                             timeout=300
                         )
                         if result.returncode == 0:
-                            st.success("✅ JSONs updated successfully!")
+                            st.success("JSONs updated successfully!")
                             st.balloons()
                             # Force refresh of the page
                             st.cache_data.clear()
                             st.rerun()
                         else:
-                            st.error("❌ Error updating JSONs")
+                            st.error("Error updating JSONs")
                             if result.stderr:
                                 st.code(result.stderr)
                     except subprocess.TimeoutExpired:
-                        st.error("⏱️ Operation timed out after 5 minutes")
+                        st.error("Operation timed out after 5 minutes")
             else:
                 st.error(f"Script not found: {script}")
         
-        if st.button("🚀 Quick Docs Setup",
+        if st.button("Quick Docs Setup",
                     use_container_width=True,
                     help="Quick setup of documentation structure"):
             script = scripts_path / "quick-docs-setup.sh"
@@ -308,22 +308,22 @@ def render_action_buttons():
                             timeout=120
                         )
                         if result.returncode == 0:
-                            st.success("✅ Documentation setup complete!")
+                            st.success("Documentation setup complete!")
                             with st.expander("View output"):
                                 st.code(result.stdout)
                         else:
-                            st.error("❌ Error in setup")
+                            st.error("Error in setup")
                             if result.stderr:
                                 st.code(result.stderr)
                     except subprocess.TimeoutExpired:
-                        st.error("⏱️ Operation timed out after 2 minutes")
+                        st.error("Operation timed out after 2 minutes")
             else:
                 st.error(f"Script not found: {script}")
     
     with col3:
         st.markdown("#### 🤖 Automation")
         
-        if st.button("📋 Generate Summary",
+        if st.button("Generate Summary",
                     use_container_width=True,
                     help="Generate documentation summary"):
             script = scripts_path / "summary-docs.sh"
@@ -337,27 +337,27 @@ def render_action_buttons():
                             timeout=60
                         )
                         if result.returncode == 0:
-                            st.success("✅ Summary generated!")
+                            st.success("Summary generated!")
                             with st.expander("View summary"):
                                 st.code(result.stdout)
                         else:
-                            st.error("❌ Error generating summary")
+                            st.error("Error generating summary")
                             if result.stderr:
                                 st.code(result.stderr)
                     except subprocess.TimeoutExpired:
-                        st.error("⏱️ Operation timed out")
+                        st.error("Operation timed out")
             else:
                 st.error(f"Script not found: {script}")
         
         # Master Coordinator - with warning
-        st.warning("⚠️ Long running process!")
-        if st.button("🚀 Run Master Coordinator",
+        st.warning("Long running process!")
+        if st.button("Run Master Coordinator",
                     use_container_width=True,
                     type="primary",
                     help="Run the complete documentation process for all projects"):
             
             # Require confirmation
-            with st.expander("⚠️ Confirmation Required"):
+            with st.expander("Confirmation Required"):
                 st.warning("This process can take a very long time (30+ minutes)")
                 if st.checkbox("I understand this will take a long time"):
                     if st.button("Confirm and Run", type="primary"):
@@ -368,7 +368,7 @@ def render_action_buttons():
 
 def render_analytics():
     """Render analytics and trends"""
-    st.markdown("### 📈 Documentation Analytics")
+    st.markdown("### <span class='material-symbols-outlined'>trending_up</span> Documentation Analytics", unsafe_allow_html=True)
     
     projects, total_stats = agent_scanner.scan_all_verification_jsons()
     
@@ -412,19 +412,19 @@ def render_analytics():
     recent = agent_scanner.get_recent_activity(5)
     for project in recent:
         if project['last_scan'] != 'N/A':
-            st.info(f"📝 **{project['project_name']}** - Last scan: {project['last_scan'][:19]} - Progress: {project['completion_percentage']}%")
+            st.info(f"**{project['project_name']}** - Last scan: {project['last_scan'][:19]} - Progress: {project['completion_percentage']}%")
 
 def run():
     """Enhanced documentation view with agent metrics"""
     
-    st.markdown('<div class="main-header">📚 Documentation Center</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header"><span class="material-symbols-outlined">library_books</span> Documentation Center</div>', unsafe_allow_html=True)
     
     # Create tabs for different sections
     tab1, tab2, tab3, tab4 = st.tabs([
-        "📖 Documents", 
-        "🤖 Agent Status", 
-        "🔧 Actions",
-        "📊 Analytics"
+        "Documents", 
+        "Agent Status", 
+        "Actions",
+        "Analytics"
     ])
     
     with tab1:
@@ -441,23 +441,23 @@ def run():
         stats = get_document_statistics(docs)
         
         # Statistics row
-        st.markdown("### 📊 Statistics")
+        st.markdown("### <span class='material-symbols-outlined'>analytics</span> Statistics", unsafe_allow_html=True)
         stat_cols = st.columns(6)
         
         with stat_cols[0]:
             st.metric("📄 Total", stats['total'])
     
     with stat_cols[1]:
-        st.metric("📁 Projetos", len(stats['by_project']))
+        st.metric("Projetos", len(stats['by_project']))
     
     with stat_cols[2]:
-        st.metric("🏷️ Categorias", len(stats['by_category']))
+        st.metric("Categorias", len(stats['by_category']))
     
     with stat_cols[3]:
-        st.metric("📝 Tipos", len(stats['by_type']))
+        st.metric("Tipos", len(stats['by_type']))
     
     with stat_cols[4]:
-        st.metric("💾 Tamanho", f"{stats['total_size_mb']:.1f} MB")
+        st.metric("Tamanho", f"{stats['total_size_mb']:.1f} MB")
     
     with stat_cols[5]:
         if st.button("🔄 Atualizar"):
@@ -471,7 +471,7 @@ def run():
     
     with col1:
         search_term = st.text_input(
-            "🔍 Buscar documentos", 
+            "Buscar documentos", 
             placeholder="Digite para filtrar documentos...",
             help="Filtra documentos por nome, caminho ou tipo"
         )
@@ -484,7 +484,7 @@ def run():
     with col3:
         # Category filter (apis, web, mobile, etc)
         category_options = ["Todas"] + sorted(list(stats['by_category'].keys()))
-        selected_category = st.selectbox("📁 Categoria", category_options)
+        selected_category = st.selectbox("Categoria", category_options)
     
     with col4:
         # Extension filter
@@ -515,7 +515,7 @@ def run():
     tree_col, content_col = st.columns([1, 2])
     
     with tree_col:
-        st.markdown("### 📂 Explorador de Documentos")
+        st.markdown("### <span class='material-symbols-outlined'>folder_open</span> Explorador de Documentos", unsafe_allow_html=True)
         
         # Add a container with scroll for the tree
         with st.container():
@@ -560,28 +560,13 @@ def run():
             doc = st.session_state.selected_doc
             
             # Document header with info
-            doc_type_icon = {
-                'README': '📖',
-                'License': '⚖️',
-                'Changelog': '📝',
-                'TODO': '✅',
-                'API': '🔌',
-                'Guide': '📚',
-                'Docker': '🐳',
-                'Security': '🔒',
-                'FAQ': '❓',
-                'Contributing': '🤝',
-                'Installation': '⚙️',
-                'Configuration': '🔧',
-                'Testing': '🧪',
-                'Environment': '🌍'
-            }.get(doc.get('doc_type', 'Documentation'), '📄')
+            doc_type = doc.get('doc_type', 'Documentation')
             
             # Create a nice header
             st.success(f"""
-            **{doc_type_icon} {doc['name']}**  
-            📁 Projeto: {doc.get('project', 'unknown')} | 🏷️ Categoria: {doc.get('category', 'general')}  
-            📏 Tamanho: {doc.get('size_kb', 0):.1f} KB | 🕒 Modificado: {doc.get('modified', 'N/A')}
+            **{doc['name']}** ({doc_type})  
+            Projeto: {doc.get('project', 'unknown')} | Categoria: {doc.get('category', 'general')}  
+            Tamanho: {doc.get('size_kb', 0):.1f} KB | Modificado: {doc.get('modified', 'N/A')}
             """)
             
             # Show full path in expander
@@ -608,7 +593,7 @@ def run():
             col1, col2, col3 = st.columns(3)
             
             with col1:
-                if st.button("📋 Copiar caminho"):
+                if st.button("Copiar caminho"):
                     st.code(doc['path'])
                     st.success("Caminho exibido acima para copiar!")
             
@@ -617,7 +602,7 @@ def run():
                     st.rerun()
             
             with col3:
-                if st.button("❌ Fechar"):
+                if st.button("Fechar"):
                     st.session_state.show_inline = False
                     if 'selected_doc' in st.session_state:
                         del st.session_state.selected_doc
@@ -635,17 +620,17 @@ def run():
             
             # Show recent documents as suggestions
             if stats['recent']:
-                st.markdown("### 🕒 Documentos Recentes")
+                st.markdown("### <span class='material-symbols-outlined'>history</span> Documentos Recentes", unsafe_allow_html=True)
                 for i, doc in enumerate(stats['recent'][:5]):
                     doc_icon = '📄'
                     if 'readme' in doc['name'].lower():
                         doc_icon = '📖'
                     elif 'license' in doc['name'].lower():
-                        doc_icon = '⚖️'
+                        doc_icon = ''
                     elif 'changelog' in doc['name'].lower():
-                        doc_icon = '📝'
+                        doc_icon = ''
                     elif 'todo' in doc['name'].lower():
-                        doc_icon = '✅'
+                        doc_icon = ''
                     
                     if st.button(
                         f"{doc_icon} {doc['name']}",
@@ -661,39 +646,28 @@ def run():
     # Sidebar info
     with st.sidebar:
         st.markdown("---")
-        st.subheader("📊 Resumo")
+        st.subheader("Resumo")
         
         # Top projects
-        st.markdown("**🏢 Top Projetos:**")
+        st.markdown("**Top Projetos:**")
         for project, count in sorted(stats['by_project'].items(), key=lambda x: x[1], reverse=True)[:5]:
             project_display = project.replace('_', ' ').title()
             st.caption(f"• {project_display}: {count} docs")
         
         # Top categories
-        st.markdown("**📁 Top Categorias:**")
+        st.markdown("**Top Categorias:**")
         for category, count in sorted(stats['by_category'].items(), key=lambda x: x[1], reverse=True)[:5]:
-            category_icon = {
-                'apis': '🔌',
-                'web': '🌐',
-                'mobile': '📱',
-                'desktop': '🖥️',
-                'services': '⚙️',
-                'documentation': '📚',
-                'scripts': '📜',
-                'dashboard': '📊',
-                'general': '📁'
-            }.get(category, '📁')
-            st.caption(f"• {category_icon} {category}: {count} docs")
+            st.caption(f"• {category}: {count} docs")
         
         # Recent docs
-        st.markdown("**🕒 Recentes:**")
+        st.markdown("**Recentes:**")
         for doc in stats['recent'][:5]:
             st.caption(f"• {doc['name'][:20]}...")
         
         # Current filters
         if any([selected_project != "Todos", selected_category != "Todas", selected_ext != "Todas", search_term]):
             st.markdown("---")
-            st.markdown("**🔍 Filtros Ativos:**")
+            st.markdown("**Filtros Ativos:**")
             if selected_project != "Todos":
                 st.caption(f"• Projeto: {selected_project}")
             if selected_category != "Todas":
@@ -702,16 +676,16 @@ def run():
                 st.caption(f"• Extensão: {selected_ext}")
             if search_term:
                 st.caption(f"• Busca: {search_term}")
-            st.caption(f"📊 {len(filtered_docs)} de {len(docs)} docs")
+            st.caption(f"{len(filtered_docs)} de {len(docs)} docs")
         
         # Export
         st.markdown("---")
-        if st.button("📥 Exportar Lista"):
+        if st.button("Exportar Lista"):
             import pandas as pd
             df = pd.DataFrame(filtered_docs)
             csv = df.to_csv(index=False)
             st.download_button(
-                label="💾 Baixar CSV",
+                label="Baixar CSV",
                 data=csv,
                 file_name="documentacao.csv",
                 mime="text/csv"

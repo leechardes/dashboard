@@ -13,7 +13,7 @@ def get_log_files():
 def run():
     """Log viewer and analyzer"""
     
-    st.markdown('<div class="main-header">📋 Visualizador de Logs</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header">Visualizador de Logs</div>', unsafe_allow_html=True)
     
     # Get log files
     with st.spinner("Escaneando arquivos de log..."):
@@ -25,7 +25,7 @@ def run():
         return
     
     # Sidebar controls
-    st.sidebar.subheader("🔍 Filtros de Log")
+    st.sidebar.subheader("Filtros de Log")
     
     # Search in log content
     search_term = st.sidebar.text_input("Buscar nos logs", placeholder="Digite para buscar...")
@@ -77,17 +77,17 @@ def run():
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.metric("📄 Total Logs", len(logs))
+        st.metric("Total Logs", len(logs))
     
     with col2:
-        st.metric("🔍 Filtrados", len(filtered_logs))
+        st.metric("Filtrados", len(filtered_logs))
     
     with col3:
         total_size = sum(log['size'] for log in filtered_logs) / (1024*1024)  # MB
-        st.metric("📐 Tamanho Total", f"{total_size:.1f} MB")
+        st.metric("Tamanho Total", f"{total_size:.1f} MB")
     
     with col4:
-        if st.button("🔄 Atualizar"):
+        if st.button("Atualizar"):
             st.cache_data.clear()
             st.rerun()
     
@@ -101,7 +101,7 @@ def run():
     # Log file selector
     log_options = [f"{log['name']} ({log['source']})" for log in filtered_logs]
     selected_log_idx = st.selectbox(
-        "📋 Selecionar arquivo de log",
+        "Selecionar arquivo de log",
         range(len(filtered_logs)),
         format_func=lambda x: log_options[x],
         index=0
@@ -132,7 +132,7 @@ def run():
     
     # Log content display
     st.markdown("---")
-    st.subheader("📄 Conteúdo do Log")
+    st.subheader("Conteúdo do Log")
     
     try:
         log_path = selected_log['path']
@@ -170,13 +170,13 @@ def run():
             for line in display_lines:
                 line = line.strip()
                 if "ERROR" in line.upper():
-                    log_content += f"🔴 {line}\n"
+                    log_content += f"[ERROR] {line}\n"
                 elif "WARN" in line.upper():
-                    log_content += f"🟡 {line}\n"
+                    log_content += f"[WARN] {line}\n"
                 elif "INFO" in line.upper():
-                    log_content += f"🔵 {line}\n"
+                    log_content += f"[INFO] {line}\n"
                 elif "DEBUG" in line.upper():
-                    log_content += f"⚪ {line}\n"
+                    log_content += f"[DEBUG] {line}\n"
                 else:
                     log_content += f"{line}\n"
             
@@ -188,18 +188,18 @@ def run():
             
             with col1:
                 error_count = sum(1 for line in display_lines if "ERROR" in line.upper())
-                st.metric("🔴 Erros", error_count)
+                st.metric("Erros", error_count)
             
             with col2:
                 warn_count = sum(1 for line in display_lines if "WARN" in line.upper())
-                st.metric("🟡 Warnings", warn_count)
+                st.metric("Warnings", warn_count)
             
             with col3:
                 info_count = sum(1 for line in display_lines if "INFO" in line.upper())
-                st.metric("🔵 Info", info_count)
+                st.metric("Info", info_count)
             
             with col4:
-                st.metric("📋 Linhas", len(display_lines))
+                st.metric("Linhas", len(display_lines))
             
         else:
             st.info("Nenhuma linha encontrada com os filtros aplicados.")
@@ -208,11 +208,11 @@ def run():
         st.error(f"Erro ao ler arquivo de log: {str(e)}")
     
     # Download option
-    if st.sidebar.button("💾 Baixar Log"):
+    if st.sidebar.button("Baixar Log"):
         try:
             with open(selected_log['path'], 'rb') as f:
                 st.sidebar.download_button(
-                    label="📥 Download Arquivo",
+                    label="Download Arquivo",
                     data=f.read(),
                     file_name=selected_log['name'],
                     mime="text/plain"
@@ -222,7 +222,7 @@ def run():
     
     # Auto-refresh for follow mode
     if follow_mode:
-        st.sidebar.markdown("🔄 **Modo Live Ativo**")
+        st.sidebar.markdown("**Modo Live Ativo**")
         import time
         time.sleep(5)
         st.rerun()

@@ -7,7 +7,7 @@ from datetime import datetime
 def run():
     """Settings page for managing project paths configuration"""
     
-    st.markdown('<div class="main-header">⚙️ Settings</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header"><span class="material-symbols-outlined">settings</span> Settings</div>', unsafe_allow_html=True)
     
     # Configuration file path
     config_file = Path("/srv/projects/shared/config/project-paths.json")
@@ -28,7 +28,7 @@ def run():
                     "description": "Projetos principais Inoveon",
                     "enabled": True,
                     "auto_discover": True,
-                    "color": "#FF6B6B"
+                    "color": "var(--primary-color)"
                 }
             ],
             "settings": {
@@ -39,7 +39,7 @@ def run():
         }
     
     # Create tabs
-    tab1, tab2, tab3 = st.tabs(["📁 Project Paths", "⚙️ General Settings", "📊 Statistics"])
+    tab1, tab2, tab3 = st.tabs(["Project Paths", "General Settings", "Statistics"])
     
     with tab1:
         st.subheader("Project Paths Configuration")
@@ -67,19 +67,19 @@ def run():
                     with col1b:
                         new_auto = st.checkbox("Auto Discover", value=path_config["auto_discover"], key=f"auto_{idx}")
                     with col1c:
-                        new_color = st.color_picker("Color", value=path_config.get("color", "#FF6B6B"), key=f"color_{idx}")
+                        new_color = st.color_picker("Color", value=path_config.get("color", "#2196f3"), key=f"color_{idx}")
                 
                 with col2:
                     st.markdown("### Actions")
-                    if st.button("🗑️ Remove", key=f"remove_{idx}", use_container_width=True):
+                    if st.button("Remove", key=f"remove_{idx}", use_container_width=True):
                         paths_modified = True
                         continue  # Skip this path
                     
                     # Check if path exists
                     if os.path.exists(new_path):
-                        st.success("✅ Path exists")
+                        st.success("Path exists")
                     else:
-                        st.error("❌ Path not found")
+                        st.error("Path not found")
                 
                 # Update path config if changed
                 if (new_id != path_config["id"] or 
@@ -87,7 +87,7 @@ def run():
                     new_desc != path_config["description"] or
                     new_enabled != path_config["enabled"] or
                     new_auto != path_config["auto_discover"] or
-                    new_color != path_config.get("color", "#FF6B6B")):
+                    new_color != path_config.get("color", "#2196f3")):
                     paths_modified = True
                 
                 updated_paths.append({
@@ -115,11 +115,11 @@ def run():
                 with col1b:
                     new_auto_input = st.checkbox("Auto Discover", value=True)
                 
-                new_color_input = st.color_picker("Color", value="#95E1D3")
+                new_color_input = st.color_picker("Color", value="#4caf50")
             
             with col2:
                 st.markdown("&nbsp;")  # Spacing
-                if st.form_submit_button("➕ Add Path", use_container_width=True, type="primary"):
+                if st.form_submit_button("Add Path", use_container_width=True, type="primary"):
                     if new_path_input and new_id_input:
                         updated_paths.append({
                             "id": new_id_input,
@@ -130,7 +130,7 @@ def run():
                             "color": new_color_input
                         })
                         paths_modified = True
-                        st.success(f"✅ Added path: {new_path_input}")
+                        st.success(f"Added path: {new_path_input}")
                         st.rerun()
                     else:
                         st.error("Please provide both ID and Path")
@@ -216,9 +216,9 @@ def run():
                 df_data.append({
                     "ID": path["id"],
                     "Path": path["path"],
-                    "Enabled": "✅" if path["enabled"] else "❌",
-                    "Auto": "✅" if path["auto_discover"] else "❌",
-                    "Exists": "✅" if os.path.exists(path["path"]) else "❌",
+                    "Enabled": "Sim" if path["enabled"] else "Não",
+                    "Auto": "Sim" if path["auto_discover"] else "Não",
+                    "Exists": "Sim" if os.path.exists(path["path"]) else "Não",
                     "Projects": project_count if project_count >= 0 else "Error"
                 })
             
@@ -237,7 +237,7 @@ def run():
     col1, col2, col3 = st.columns([2, 1, 2])
     
     with col2:
-        if st.button("💾 Save Configuration", use_container_width=True, type="primary"):
+        if st.button("Save Configuration", use_container_width=True, type="primary"):
             try:
                 # Update timestamp
                 config["last_updated"] = datetime.now().isoformat() + "Z"
@@ -249,10 +249,10 @@ def run():
                 with open(config_file, 'w') as f:
                     json.dump(config, f, indent=2)
                 
-                st.success("✅ Configuration saved successfully!")
+                st.success("Configuration saved successfully!")
                 
                 # Show which scripts will be affected
-                with st.expander("📝 Affected Scripts", expanded=True):
+                with st.expander("Affected Scripts", expanded=True):
                     scripts = [
                         "discover-projects-to-document.sh",
                         "populate-verification-json.sh",
@@ -269,8 +269,8 @@ def run():
                 st.balloons()
                 
             except Exception as e:
-                st.error(f"❌ Error saving configuration: {str(e)}")
+                st.error(f"Error saving configuration: {str(e)}")
     
     # Display current configuration (debug)
-    with st.expander("🔍 View Raw Configuration", expanded=False):
+    with st.expander("View Raw Configuration", expanded=False):
         st.json(config)

@@ -49,16 +49,16 @@ def create_progress_metric(title, current, total, unit="", icon="analytics"):
 def create_status_metric(title, status, icon="analytics"):
     """Create a status metric with colored indicator"""
     color_map = {
-        "online": "#4CAF50",
-        "offline": "#F44336", 
-        "warning": "#FF9800",
-        "info": "#2196F3",
-        "clean": "#4CAF50",
-        "modified": "#FF9800",
-        "error": "#F44336"
+        "online": "var(--success-color)",
+        "offline": "var(--error-color)", 
+        "warning": "var(--warning-color)",
+        "info": "var(--info-color)",
+        "clean": "var(--success-color)",
+        "modified": "var(--warning-color)",
+        "error": "var(--error-color)"
     }
     
-    color = color_map.get(status.lower(), "#888888")
+    color = color_map.get(status.lower(), "var(--text-muted)")
     
     st.markdown(f"""
     <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem;">
@@ -81,7 +81,7 @@ def create_info_grid(data, columns=2):
 
 def create_expandable_metric(title, value, details, icon="analytics"):
     """Create an expandable metric card with details"""
-    with st.expander(f"📊 {title}: {value}"):  # Using emoji temporarily for expander compatibility
+    with st.expander(f"{title}: {value}"):  # Using emoji temporarily for expander compatibility
         if isinstance(details, dict):
             for key, val in details.items():
                 st.text(f"{key}: {val}")
@@ -95,11 +95,11 @@ def create_comparison_metric(title, current, previous, unit="", icon="analytics"
     """Create a metric with comparison to previous value"""
     if previous != 0:
         change = ((current - previous) / previous) * 100
-        change_color = "#4CAF50" if change >= 0 else "#F44336"
+        change_color = "var(--success-color)" if change >= 0 else "var(--error-color)"
         change_icon = "trending_up" if change >= 0 else "trending_down"
         change_text = f"{change:+.1f}%"
     else:
-        change_color = "#888888"
+        change_color = "var(--text-muted)"
         change_icon = "remove"
         change_text = "N/A"
     
@@ -107,8 +107,8 @@ def create_comparison_metric(title, current, previous, unit="", icon="analytics"
     <div class="metric-card">
         <div style="display: flex; align-items: center; justify-content: space-between;">
             <div>
-                <div style="font-size: 0.8rem; color: #888; margin-bottom: 0.2rem;">{title}</div>
-                <div style="font-size: 1.5rem; font-weight: 600; color: #FAFAFA;">{current}{unit}</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.2rem;">{title}</div>
+                <div style="font-size: 1.5rem; font-weight: 600; color: var(--text-color);">{current}{unit}</div>
                 <div style="font-size: 0.8rem; color: {change_color}; display: flex; align-items: center; gap: 0.2rem;">
                     <span class="material-icons" style="font-size: 1rem; color: {change_color};">{change_icon}</span>
                     {change_text}
@@ -125,10 +125,10 @@ def create_gauge_metric(title, value, max_value, icon="analytics", color_thresho
     
     # Default color thresholds
     if color_thresholds is None:
-        color_thresholds = [(50, "#4CAF50"), (75, "#FF9800"), (100, "#F44336")]
+        color_thresholds = [(50, "var(--success-color)"), (75, "var(--warning-color)"), (100, "var(--error-color)")]
     
     # Determine color based on thresholds
-    color = "#888888"
+    color = "var(--text-muted)"
     for threshold, threshold_color in color_thresholds:
         if percentage <= threshold:
             color = threshold_color
@@ -138,14 +138,14 @@ def create_gauge_metric(title, value, max_value, icon="analytics", color_thresho
     <div class="metric-card">
         <div style="text-align: center;">
             <div class="material-icons" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--primary-color);">{icon}</div>
-            <div style="font-size: 0.9rem; color: #888; margin-bottom: 0.5rem;">{title}</div>
+            <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">{title}</div>
             <div style="font-size: 2rem; font-weight: 600; color: {color}; margin-bottom: 0.5rem;">
                 {value}
             </div>
-            <div style="background: #262730; border-radius: 10px; overflow: hidden; height: 8px;">
+            <div style="background: var(--secondary-background-color); border-radius: 10px; overflow: hidden; height: 8px;">
                 <div style="background: {color}; height: 100%; width: {percentage}%;"></div>
             </div>
-            <div style="font-size: 0.8rem; color: #888; margin-top: 0.3rem;">
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.3rem;">
                 {percentage:.1f}% of {max_value}
             </div>
         </div>
@@ -216,7 +216,7 @@ def create_alert_metric(title, message, alert_type="info", icon=None):
 def create_trend_metric(title, values, labels=None, icon="analytics"):
     """Create a simple trend metric with sparkline-like display"""
     if not values:
-        st.warning(f"📊 {title}: Nenhum dado disponível")  # Using emoji for warning compatibility
+        st.warning(f"{title}: Nenhum dado disponível")  # Using emoji for warning compatibility
         return
     
     # Calculate trend
