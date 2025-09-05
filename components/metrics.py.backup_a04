@@ -22,23 +22,23 @@ def create_system_metrics():
     
     with col1:
         cpu_percent = psutil.cpu_percent(interval=1)
-        create_metric_card("CPU Usage", f"{cpu_percent}%", "desktop_windows")
+        create_metric_card("CPU Usage", f"{cpu_percent}%", "🖥️")
     
     with col2:
         memory = psutil.virtual_memory()
-        create_metric_card("Memória", f"{memory.percent}%", "memory")
+        create_metric_card("Memória", f"{memory.percent}%", "💾")
     
     with col3:
         disk = psutil.disk_usage('/')
         disk_percent = (disk.used / disk.total) * 100
-        create_metric_card("Disco", f"{disk_percent:.1f}%", "storage")
+        create_metric_card("Disco", f"{disk_percent:.1f}%", "💽")
     
     with col4:
         boot_time = datetime.datetime.fromtimestamp(psutil.boot_time())
         uptime = datetime.datetime.now() - boot_time
-        create_metric_card("Uptime", f"{uptime.days}d", "schedule")
+        create_metric_card("Uptime", f"{uptime.days}d", "⏱️")
 
-def create_progress_metric(title, current, total, unit="", icon="analytics"):
+def create_progress_metric(title, current, total, unit="", icon="📊"):
     """Create a progress metric with progress bar"""
     percentage = (current / total) * 100 if total > 0 else 0
     
@@ -46,7 +46,7 @@ def create_progress_metric(title, current, total, unit="", icon="analytics"):
     st.progress(percentage / 100)
     st.caption(f"{current:.1f}{unit} / {total:.1f}{unit} ({percentage:.1f}%)")
 
-def create_status_metric(title, status, icon="analytics"):
+def create_status_metric(title, status, icon="📊"):
     """Create a status metric with colored indicator"""
     color_map = {
         "online": "#4CAF50",
@@ -62,9 +62,9 @@ def create_status_metric(title, status, icon="analytics"):
     
     st.markdown(f"""
     <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem;">
-        <div class="material-icons" style="font-size: 1.2rem; color: var(--text-color);">{icon}</div>
+        <div style="font-size: 1.2rem;">{icon}</div>
         <div>
-            <div style="font-weight: 600; color: var(--text-color);">{title}</div>
+            <div style="font-weight: 600;">{title}</div>
             <div style="color: {color}; font-size: 0.9rem;">● {status.upper()}</div>
         </div>
     </div>
@@ -79,9 +79,9 @@ def create_info_grid(data, columns=2):
         with cols[i % columns]:
             st.metric(key, value)
 
-def create_expandable_metric(title, value, details, icon="analytics"):
+def create_expandable_metric(title, value, details, icon="📊"):
     """Create an expandable metric card with details"""
-    with st.expander(f"📊 {title}: {value}"):  # Using emoji temporarily for expander compatibility
+    with st.expander(f"{icon} {title}: {value}"):
         if isinstance(details, dict):
             for key, val in details.items():
                 st.text(f"{key}: {val}")
@@ -91,16 +91,16 @@ def create_expandable_metric(title, value, details, icon="analytics"):
         else:
             st.text(str(details))
 
-def create_comparison_metric(title, current, previous, unit="", icon="analytics"):
+def create_comparison_metric(title, current, previous, unit="", icon="📊"):
     """Create a metric with comparison to previous value"""
     if previous != 0:
         change = ((current - previous) / previous) * 100
         change_color = "#4CAF50" if change >= 0 else "#F44336"
-        change_icon = "trending_up" if change >= 0 else "trending_down"
+        change_icon = "📈" if change >= 0 else "📉"
         change_text = f"{change:+.1f}%"
     else:
         change_color = "#888888"
-        change_icon = "remove"
+        change_icon = "➖"
         change_text = "N/A"
     
     st.markdown(f"""
@@ -109,17 +109,16 @@ def create_comparison_metric(title, current, previous, unit="", icon="analytics"
             <div>
                 <div style="font-size: 0.8rem; color: #888; margin-bottom: 0.2rem;">{title}</div>
                 <div style="font-size: 1.5rem; font-weight: 600; color: #FAFAFA;">{current}{unit}</div>
-                <div style="font-size: 0.8rem; color: {change_color}; display: flex; align-items: center; gap: 0.2rem;">
-                    <span class="material-icons" style="font-size: 1rem; color: {change_color};">{change_icon}</span>
-                    {change_text}
+                <div style="font-size: 0.8rem; color: {change_color};">
+                    {change_icon} {change_text}
                 </div>
             </div>
-            <div class="material-icons" style="font-size: 2rem; color: var(--primary-color);">{icon}</div>
+            <div style="font-size: 2rem;">{icon}</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-def create_gauge_metric(title, value, max_value, icon="analytics", color_thresholds=None):
+def create_gauge_metric(title, value, max_value, icon="📊", color_thresholds=None):
     """Create a gauge-style metric"""
     percentage = (value / max_value) * 100 if max_value > 0 else 0
     
@@ -137,7 +136,7 @@ def create_gauge_metric(title, value, max_value, icon="analytics", color_thresho
     st.markdown(f"""
     <div class="metric-card">
         <div style="text-align: center;">
-            <div class="material-icons" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--primary-color);">{icon}</div>
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">{icon}</div>
             <div style="font-size: 0.9rem; color: #888; margin-bottom: 0.5rem;">{title}</div>
             <div style="font-size: 2rem; font-weight: 600; color: {color}; margin-bottom: 0.5rem;">
                 {value}
@@ -152,9 +151,9 @@ def create_gauge_metric(title, value, max_value, icon="analytics", color_thresho
     </div>
     """, unsafe_allow_html=True)
 
-def create_table_metric(title, data, icon="analytics"):
+def create_table_metric(title, data, icon="📊"):
     """Create a table-style metric display"""
-    st.markdown(f"### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>{icon}</span>{title}", unsafe_allow_html=True)
+    st.markdown(f"### {icon} {title}")
     
     if isinstance(data, dict):
         # Convert dict to list of tuples for table display
@@ -180,12 +179,12 @@ def create_alert_metric(title, message, alert_type="info", icon=None):
     """Create an alert-style metric"""
     if icon is None:
         icon_map = {
-            "info": "info",
-            "success": "check_circle", 
-            "warning": "warning",
-            "error": "cancel"
+            "info": "ℹ️",
+            "success": "✅", 
+            "warning": "⚠️",
+            "error": "❌"
         }
-        icon = icon_map.get(alert_type, "info")
+        icon = icon_map.get(alert_type, "ℹ️")
     
     alert_functions = {
         "info": st.info,
@@ -194,41 +193,24 @@ def create_alert_metric(title, message, alert_type="info", icon=None):
         "error": st.error
     }
     
-    # Create custom alert with Material Icons
-    alert_colors = {
-        "info": "var(--info-color)",
-        "success": "var(--success-color)", 
-        "warning": "var(--warning-color)",
-        "error": "var(--error-color)"
-    }
-    color = alert_colors.get(alert_type, "var(--info-color)")
-    
-    st.markdown(f"""
-    <div style="padding: 1rem; border-radius: 0.5rem; border-left: 4px solid {color}; background: var(--secondary-background-color); margin: 0.5rem 0;">
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <span class="material-icons" style="color: {color};">{icon}</span>
-            <strong style="color: var(--text-color);">{title}:</strong>
-            <span style="color: var(--text-color);">{message}</span>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    alert_func = alert_functions.get(alert_type, st.info)
+    alert_func(f"{icon} **{title}**: {message}")
 
-def create_trend_metric(title, values, labels=None, icon="analytics"):
+def create_trend_metric(title, values, labels=None, icon="📊"):
     """Create a simple trend metric with sparkline-like display"""
     if not values:
-        st.warning(f"📊 {title}: Nenhum dado disponível")  # Using emoji for warning compatibility
+        st.warning(f"{icon} {title}: Nenhum dado disponível")
         return
     
     # Calculate trend
     if len(values) >= 2:
-        trend_icon = "trending_up" if values[-1] > values[0] else "trending_down" if values[-1] < values[0] else "remove"
-        trend = f"<span class='material-icons' style='font-size: 1.2rem;'>{trend_icon}</span>"
+        trend = "📈" if values[-1] > values[0] else "📉" if values[-1] < values[0] else "➖"
         change = values[-1] - values[-2] if len(values) >= 2 else 0
     else:
-        trend = "<span class='material-icons' style='font-size: 1.2rem;'>remove</span>"
+        trend = "➖"
         change = 0
     
-    st.markdown(f"### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>{icon}</span>{title}", unsafe_allow_html=True)
+    st.markdown(f"### {icon} {title}")
     
     # Display current value and trend
     col1, col2, col3 = st.columns(3)
@@ -237,7 +219,7 @@ def create_trend_metric(title, values, labels=None, icon="analytics"):
         st.metric("Atual", f"{values[-1]:.1f}")
     
     with col2:
-        st.markdown(f"**Tendência:** {trend}", unsafe_allow_html=True)
+        st.metric("Tendência", trend)
     
     with col3:
         st.metric("Mudança", f"{change:+.1f}")

@@ -1,0 +1,209 @@
+/* Material Design Icons */
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+
+/* CSS Adaptativo - Funciona em tema claro E escuro */
+:root {
+    /* Cores adaptativas do Streamlit */
+    --bg-primary: var(--background-color);
+    --text-primary: var(--text-color);
+    --bg-secondary: var(--secondary-background-color);
+    --text-secondary: var(--text-color-secondary);
+    
+    /* Cores de status adaptativas */
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --error-color: #ef4444;
+    --info-color: #3b82f6;
+    
+    /* Bordas e sombras adaptativas */
+    --border-color: rgba(128, 128, 128, 0.2);
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Material Icons */
+.material-icons,
+.material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    vertical-align: middle;
+}
+
+/* Headers profissionais */
+.main-header {
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--info-color);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.main-header .material-icons {
+    font-size: 32px;
+    color: var(--info-color);
+}
+
+/* Cards e containers */
+.metric-card {
+    background: var(--bg-secondary);
+    padding: 1.2rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+}
+
+.metric-card .material-icons {
+    color: var(--text-secondary);
+    margin-right: 0.5rem;
+}
+
+/* Botões com ícones */
+.stButton button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stButton .material-icons {
+    font-size: 20px;
+}
+
+/* Status indicators */
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.status-success .material-icons { color: var(--success-color); }
+.status-warning .material-icons { color: var(--warning-color); }
+.status-error .material-icons { color: var(--error-color); }
+.status-info .material-icons { color: var(--info-color); }
+
+/* Sidebar navigation */
+.nav-header {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-header .material-icons {
+    font-size: 28px;
+    color: var(--info-color);
+}
+
+/* Tabs com Material Icons */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 1rem;
+}
+
+.stTabs [data-baseweb="tab"] {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Expander com ícones */
+.streamlit-expanderHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Métricas profissionais */
+.stMetric {
+    background: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.stMetric .material-icons {
+    vertical-align: middle;
+    margin-right: 0.5rem;
+}
+
+/* Selectbox e inputs */
+.stSelectbox > div > div,
+.stTextInput > div > div > input {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+/* Info boxes */
+.info-box {
+    background: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--info-color);
+    margin: 1rem 0;
+}
+
+.warning-box {
+    background: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--warning-color);
+    margin: 1rem 0;
+}
+
+.error-box {
+    background: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--error-color);
+    margin: 1rem 0;
+}
+
+.success-box {
+    background: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--success-color);
+    margin: 1rem 0;
+}
+
+/* Progress bars */
+.stProgress > div > div > div {
+    background-color: var(--info-color);
+}
+
+/* DataFrames */
+.stDataFrame {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Remover decorações desnecessárias */
+.element-container:has(.material-icons) {
+    margin-bottom: 0.5rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .material-icons,
+    .material-symbols-outlined {
+        font-size: 20px;
+    }
+    
+    .main-header .material-icons {
+        font-size: 24px;
+    }
+}

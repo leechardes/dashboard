@@ -9,25 +9,25 @@ from utils.system_monitor import get_detailed_system_info, get_network_info, get
 def run():
     """Detailed system information view"""
     
-    st.markdown('<div class="main-header"><span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem;">desktop_windows</span>Informações Detalhadas do Sistema</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header">🖥️ Informações Detalhadas do Sistema</div>', unsafe_allow_html=True)
     
     # Refresh button
-    if st.sidebar.button("🔄 Atualizar Informações"):  # Keep emoji for button compatibility
+    if st.sidebar.button("🔄 Atualizar Informações"):
         st.rerun()
     
     # System overview
-    st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>desktop_windows</span>Visão Geral do Sistema", unsafe_allow_html=True)
+    st.subheader("🖥️ Visão Geral do Sistema")
     
     col1, col2 = st.columns(2)
     
     with col1:
         # Basic system info
         st.info(f"""
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>home</span> Hostname:** {socket.gethostname()}
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>desktop_windows</span> Sistema:** {platform.system()} {platform.release()}
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>construction</span> Arquitetura:** {platform.machine()}
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>code</span> Python:** {platform.python_version()}
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>person</span> Usuário:** {os.getenv('USER', 'N/A')}
+        **🏠 Hostname:** {socket.gethostname()}
+        **🖥️ Sistema:** {platform.system()} {platform.release()}
+        **🏗️ Arquitetura:** {platform.machine()}
+        **🐍 Python:** {platform.python_version()}
+        **👤 Usuário:** {os.getenv('USER', 'N/A')}
         """)
     
     with col2:
@@ -36,19 +36,19 @@ def run():
         uptime = datetime.datetime.now() - boot_time
         
         st.info(f"""
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>access_time</span> Boot Time:** {boot_time.strftime('%Y-%m-%d %H:%M:%S')}
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>schedule</span> Uptime:** {uptime.days} dias, {uptime.seconds//3600}h {(uptime.seconds//60)%60}m
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>public</span> IP Local:** {socket.gethostbyname(socket.gethostname())}
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>build</span> PID Atual:** {os.getpid()}
-        **<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>folder</span> Working Dir:** {os.getcwd()}
+        **⏰ Boot Time:** {boot_time.strftime('%Y-%m-%d %H:%M:%S')}
+        **⏱️ Uptime:** {uptime.days} dias, {uptime.seconds//3600}h {(uptime.seconds//60)%60}m
+        **🌐 IP Local:** {socket.gethostbyname(socket.gethostname())}
+        **🔧 PID Atual:** {os.getpid()}
+        **📁 Working Dir:** {os.getcwd()}
         """)
     
     # Hardware Information
     st.markdown("---")
-    st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>build</span>Informações de Hardware", unsafe_allow_html=True)
+    st.subheader("🔧 Informações de Hardware")
     
     # CPU Information
-    st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>desktop_windows</span>Processador", unsafe_allow_html=True)
+    st.markdown("### 🖥️ Processador")
     cpu_col1, cpu_col2 = st.columns(2)
     
     with cpu_col1:
@@ -69,7 +69,7 @@ def run():
             st.progress(percent/100, text=f"Core {i+1}: {percent}%")
     
     # Memory Information
-    st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>memory</span>Memória", unsafe_allow_html=True)
+    st.markdown("### 💾 Memória")
     memory_col1, memory_col2 = st.columns(2)
     
     with memory_col1:
@@ -96,7 +96,7 @@ def run():
         """)
     
     # Disk Information
-    st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>storage</span>Armazenamento", unsafe_allow_html=True)
+    st.markdown("### 💽 Armazenamento")
     
     # Get all disk partitions
     partitions = psutil.disk_partitions()
@@ -105,19 +105,19 @@ def run():
         try:
             partition_usage = psutil.disk_usage(partition.mountpoint)
             
-            st.markdown(f"**<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>folder</span> {partition.mountpoint}** ({partition.fstype})", unsafe_allow_html=True)
+            st.markdown(f"**📁 {partition.mountpoint}** ({partition.fstype})")
             
             col1, col2, col3 = st.columns(3)
             
             with col1:
-                st.metric("💽 Total", f"{partition_usage.total / (1024**3):.1f} GB")  # Keep emoji for metric compatibility
+                st.metric("💽 Total", f"{partition_usage.total / (1024**3):.1f} GB")
             
             with col2:
                 st.metric("✅ Livre", f"{partition_usage.free / (1024**3):.1f} GB")
             
             with col3:
                 used_percent = (partition_usage.used / partition_usage.total) * 100
-                st.metric("⚠️ Usado", f"{used_percent:.1f}%")  # Keep emoji for metric compatibility
+                st.metric("⚠️ Usado", f"{used_percent:.1f}%")
             
             # Progress bar for disk usage
             st.progress(used_percent/100)
@@ -128,7 +128,7 @@ def run():
         st.markdown("---")
     
     # Network Information
-    st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>public</span>Informações de Rede", unsafe_allow_html=True)
+    st.markdown("### 🌐 Informações de Rede")
     
     network_info = get_network_info()
     
@@ -149,7 +149,7 @@ def run():
                         st.text(f"  IPv6: {addr.get('address', 'N/A')}")
     
     with net_col2:
-        st.markdown("**<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>analytics</span> Estatísticas de Rede:**", unsafe_allow_html=True)
+        st.markdown("**📊 Estatísticas de Rede:**")
         net_stats = psutil.net_io_counters()
         st.text(f"Bytes Enviados: {net_stats.bytes_sent / (1024**2):.1f} MB")
         st.text(f"Bytes Recebidos: {net_stats.bytes_recv / (1024**2):.1f} MB")
@@ -193,7 +193,7 @@ def run():
     
     # Process Information
     st.markdown("---")
-    st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>refresh</span>Informações de Processos", unsafe_allow_html=True)
+    st.subheader("🔄 Informações de Processos")
     
     process_col1, process_col2 = st.columns(2)
     
@@ -202,7 +202,7 @@ def run():
         running_processes = len([p for p in psutil.process_iter() if p.status() == 'running'])
         sleeping_processes = len([p for p in psutil.process_iter() if p.status() == 'sleeping'])
         
-        st.metric("📊 Total de Processos", total_processes)  # Keep emoji for metric compatibility
+        st.metric("📊 Total de Processos", total_processes)
         st.metric("🏃 Em Execução", running_processes)
         st.metric("😴 Dormindo", sleeping_processes)
     
@@ -249,7 +249,7 @@ def run():
     
     # Environment variables (limited view)
     st.markdown("---")
-    st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>public</span>Variáveis de Ambiente (Selecionadas)", unsafe_allow_html=True)
+    st.subheader("🌍 Variáveis de Ambiente (Selecionadas)")
     
     important_vars = ['PATH', 'HOME', 'USER', 'SHELL', 'LANG', 'PWD', 'PYTHONPATH']
     env_data = []
@@ -266,18 +266,18 @@ def run():
     
     # Auto-refresh option
     st.sidebar.markdown("---")
-    st.sidebar.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>settings</span>Opções", unsafe_allow_html=True)
+    st.sidebar.subheader("⚙️ Opções")
     
     auto_refresh = st.sidebar.checkbox("Auto-refresh (30s)", value=False)
     
     if auto_refresh:
-        st.sidebar.markdown("<div style='display: flex; align-items: center; gap: 0.5rem;'><span class='material-icons'>refresh</span><strong>Auto-refresh ativo</strong></div>", unsafe_allow_html=True)
+        st.sidebar.markdown("🔄 **Auto-refresh ativo**")
         import time
         time.sleep(30)
         st.rerun()
     
     # Export system info
-    if st.sidebar.button("💾 Exportar Info Sistema"):  # Keep emoji for button compatibility
+    if st.sidebar.button("💾 Exportar Info Sistema"):
         system_info = get_detailed_system_info()
         
         # Create comprehensive system report

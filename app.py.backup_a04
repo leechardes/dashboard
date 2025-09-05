@@ -11,18 +11,10 @@ from views import dashboard, documentation_antd, logs, repositories, system, set
 # Configure Streamlit page
 st.set_page_config(
     page_title="Dev Dashboard",
-    page_icon=":material/rocket:",
+    page_icon="🚀",  # Material: rocket_launch
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
-# Load Material Icons and adaptive CSS
-try:
-    with open('static/adaptive_theme.css', 'r') as f:
-        css = f.read()
-    st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
-except FileNotFoundError:
-    pass
 
 # Custom CSS for better styling
 st.markdown("""
@@ -43,15 +35,6 @@ st.markdown("""
         word-wrap: normal;
         direction: ltr;
         vertical-align: middle;
-        color: var(--text-color);
-    }
-    
-    /* Adaptive theming for material icons */
-    @media (prefers-color-scheme: dark) {
-        .material-icons {
-            color: var(--text-color);
-            filter: brightness(0.9);
-        }
     }
     .main-header {
         font-size: 2.5rem;
@@ -92,14 +75,14 @@ def main():
     
     # Create navigation using st.navigation  
     pages = [
-        st.Page(dashboard.run, title="Dashboard", icon=":material/analytics:", url_path="dashboard"),
-        st.Page(documentation_antd.run, title="Documentation", icon=":material/menu_book:", url_path="docs"),
-        st.Page(repositories.run, title="Repositories", icon=":material/folder:", url_path="repos"),
-        st.Page(system.run, title="System", icon=":material/desktop_windows:", url_path="system"),
-        st.Page(claude_manager.run, title="Claude Manager", icon=":material/computer:", url_path="claude-manager"),
-        st.Page(service_management.run, title="Service Control", icon=":material/handyman:", url_path="service-control"),
-        st.Page(logs.run, title="Logs", icon=":material/assignment:", url_path="logs"),
-        st.Page(settings.run, title="Settings", icon=":material/settings:", url_path="settings")
+        st.Page(dashboard.run, title="Dashboard", icon="📊", url_path="dashboard"),  # Material: analytics
+        st.Page(documentation_antd.run, title="Documentation", icon="📚", url_path="docs"),  # Material: menu_book
+        st.Page(repositories.run, title="Repositories", icon="📁", url_path="repos"),  # Material: folder
+        st.Page(system.run, title="System", icon="🖥️", url_path="system"),  # Material: desktop_windows
+        st.Page(claude_manager.run, title="Claude Manager", icon="💻", url_path="claude-manager"),  # Material: computer
+        st.Page(service_management.run, title="Service Control", icon="🛠️", url_path="service-control"),  # Material: handyman
+        st.Page(logs.run, title="Logs", icon="📋", url_path="logs"),  # Material: assignment
+        st.Page(settings.run, title="Settings", icon="⚙️", url_path="settings")  # Material: settings
     ]
     
     # Navigation
