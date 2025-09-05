@@ -92,14 +92,14 @@ def main():
     
     # Create navigation using st.navigation  
     pages = [
-        st.Page(dashboard.run, title="Dashboard", icon=":material/analytics:", url_path="dashboard"),
-        st.Page(documentation_antd.run, title="Documentation", icon=":material/menu_book:", url_path="docs"),
-        st.Page(repositories.run, title="Repositories", icon=":material/folder:", url_path="repos"),
-        st.Page(system.run, title="System", icon=":material/desktop_windows:", url_path="system"),
-        st.Page(claude_manager.run, title="Claude Manager", icon=":material/computer:", url_path="claude-manager"),
-        st.Page(service_management.run, title="Service Control", icon=":material/handyman:", url_path="service-control"),
+        st.Page(dashboard.run, title="Painel", icon=":material/analytics:", url_path="dashboard"),
+        st.Page(documentation_antd.run, title="Documentação", icon=":material/menu_book:", url_path="docs"),
+        st.Page(repositories.run, title="Repositórios", icon=":material/folder:", url_path="repos"),
+        st.Page(system.run, title="Sistema", icon=":material/desktop_windows:", url_path="system"),
+        st.Page(claude_manager.run, title="Gerenciador Claude", icon=":material/computer:", url_path="claude-manager"),
+        st.Page(service_management.run, title="Controle de Serviços", icon=":material/handyman:", url_path="service-control"),
         st.Page(logs.run, title="Logs", icon=":material/assignment:", url_path="logs"),
-        st.Page(settings.run, title="Settings", icon=":material/settings:", url_path="settings")
+        st.Page(settings.run, title="Configurações", icon=":material/settings:", url_path="settings")
     ]
     
     # Navigation
@@ -109,7 +109,7 @@ def main():
     # Footer
     st.sidebar.markdown("---")
     st.sidebar.markdown("**Status:** <span class='material-icons' style='color: var(--success-color); font-size: 1rem;'>check_circle</span> Online", unsafe_allow_html=True)
-    st.sidebar.markdown(f"**Port:** {os.getenv('STREAMLIT_SERVER_PORT', '8081')}")
+    st.sidebar.markdown(f"**Porta:** {os.getenv('STREAMLIT_SERVER_PORT', '8081')}")
 
 if __name__ == "__main__":
     main()

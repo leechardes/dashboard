@@ -7,7 +7,7 @@ from datetime import datetime
 def run():
     """Settings page for managing project paths configuration"""
     
-    st.markdown('<div class="main-header"><span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem; color: var(--info-color);">settings</span>Configurações</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header"><span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem;">settings</span>Configurações</div>', unsafe_allow_html=True)
     
     # Configuration file path
     config_file = Path("/srv/projects/shared/config/project-paths.json")
@@ -42,7 +42,7 @@ def run():
     tab1, tab2, tab3 = st.tabs(["Caminhos dos Projetos", "Configurações Gerais", "Estatísticas"])
     
     with tab1:
-        st.subheader("Configuração de Caminhos dos Projetos")
+        st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>folder_open</span>Configuração de Caminhos dos Projetos", unsafe_allow_html=True)
         st.info("Configure quais diretórios contêm projetos a serem documentados")
         
         # Current paths

@@ -115,18 +115,18 @@ def save_env_config(config):
 
 def run():
     """Main function for Service Management view"""
-    st.title("Service Management")
-    st.markdown("Control and configure the dashboard service")
+    st.markdown('<div class="main-header"><span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem;">settings</span>Gerenciamento de Serviços</div>', unsafe_allow_html=True)
+    st.markdown("Controle e configure o serviço do dashboard")
     
     # Create tabs
-    tab1, tab2, tab3, tab4 = st.tabs(["Status", "Control", "Configuration", "Logs"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Status", "Controle", "Configuração", "Logs"])
     
     # Tab 1: Status
     with tab1:
-        st.subheader("Service Status")
+        st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>info</span>Status do Serviço", unsafe_allow_html=True)
         
         # Refresh button
-        if st.button(":material/refresh: Refresh Status", key="refresh_status"):
+        if st.button(":material/refresh: Atualizar Status", key="refresh_status"):
             st.rerun()
         
         # Get current status
@@ -137,22 +137,22 @@ def run():
         
         with col1:
             if status["active"]:
-                st.metric("Status", "Active")
+                st.metric("Status", "Ativo")
             else:
-                st.metric("Status", "Inactive")
+                st.metric("Status", "Inativo")
         
         with col2:
             st.metric("PID", status["pid"] or "N/A")
         
         with col3:
-            st.metric("Memory", status["memory"] or "N/A")
+            st.metric("Memória", status["memory"] or "N/A")
         
         with col4:
             port = load_env_config().get("STREAMLIT_SERVER_PORT", "8081")
-            st.metric("Port", port)
+            st.metric("Porta", port)
         
         # Show detailed status
-        with st.expander("Detailed Status"):
+        with st.expander("Status Detalhado"):
             st.code(status["status_text"])
         
         # Quick info
@@ -166,71 +166,71 @@ def run():
     
     # Tab 2: Control
     with tab2:
-        st.subheader("Service Control")
+        st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>tune</span>Controle do Serviço", unsafe_allow_html=True)
         
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
-            if st.button("Start", key="start_service", use_container_width=True):
+            if st.button(":material/play_arrow: Iniciar", key="start_service", width='stretch'):
                 with st.spinner("Starting service..."):
                     success, stdout, stderr = run_command("sudo systemctl start streamlit-dashboard")
                     if success:
-                        st.success("Service started successfully!")
+                        st.success("Serviço iniciado com sucesso!")
                     else:
-                        st.error(f"Failed to start service: {stderr}")
+                        st.error(f"Falha ao iniciar serviço: {stderr}")
                     time.sleep(2)
                     st.rerun()
         
         with col2:
-            if st.button("Stop", key="stop_service", use_container_width=True):
-                if st.checkbox("I'm sure I want to stop the service"):
+            if st.button(":material/stop: Parar", key="stop_service", width='stretch'):
+                if st.checkbox("Tenho certeza que quero parar o serviço"):
                     with st.spinner("Stopping service..."):
                         success, stdout, stderr = run_command("sudo systemctl stop streamlit-dashboard")
                         if success:
-                            st.success("Service stopped successfully!")
+                            st.success("Serviço parado com sucesso!")
                         else:
-                            st.error(f"Failed to stop service: {stderr}")
+                            st.error(f"Falha ao parar serviço: {stderr}")
                         time.sleep(2)
                         st.rerun()
         
         with col3:
-            if st.button(":material/refresh: Restart", key="restart_service", use_container_width=True):
+            if st.button(":material/restart_alt: Reiniciar", key="restart_service", width='stretch'):
                 with st.spinner("Restarting service..."):
                     success, stdout, stderr = run_command("sudo systemctl restart streamlit-dashboard")
                     if success:
-                        st.success("Service restarted successfully!")
+                        st.success("Serviço reiniciado com sucesso!")
                     else:
-                        st.error(f"Failed to restart service: {stderr}")
+                        st.error(f"Falha ao reiniciar serviço: {stderr}")
                     time.sleep(2)
                     st.rerun()
         
         with col4:
-            if st.button("Reload", key="reload_service", use_container_width=True):
+            if st.button(":material/cached: Recarregar", key="reload_service", width='stretch'):
                 with st.spinner("Reloading service..."):
                     success, stdout, stderr = run_command("sudo systemctl reload streamlit-dashboard")
                     if success:
-                        st.success("Service reloaded successfully!")
+                        st.success("Serviço recarregado com sucesso!")
                     else:
-                        st.error(f"Failed to reload service: {stderr}")
+                        st.error(f"Falha ao recarregar serviço: {stderr}")
                     time.sleep(2)
                     st.rerun()
         
         st.markdown("---")
         
         # Advanced controls
-        st.subheader("Advanced Controls")
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>settings_applications</span>Controles Avançados", unsafe_allow_html=True)
         
         col1, col2 = st.columns(2)
         
         with col1:
-            st.markdown("**Auto-start on Boot**")
+            st.markdown("**<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>power_settings_new</span> Início Automático na Inicialização**", unsafe_allow_html=True)
             
             # Check if enabled
             success, stdout, stderr = run_command("systemctl is-enabled streamlit-dashboard")
             is_enabled = stdout.strip() == "enabled"
             
             if is_enabled:
-                st.success("Auto-start is enabled")
+                st.success("Início automático ativado")
                 if st.button(":material/block: Disable Auto-start"):
                     success, stdout, stderr = run_command("sudo systemctl disable streamlit-dashboard")
                     if success:

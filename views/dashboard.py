@@ -38,7 +38,7 @@ def run():
     
     with col1:
         cpu_percent = psutil.cpu_percent(interval=1)
-        create_metric_card("CPU Usage", f"{cpu_percent}%", "desktop_windows")
+        create_metric_card("Uso de CPU", f"{cpu_percent}%", "desktop_windows")
     
     with col2:
         memory = psutil.virtual_memory()
@@ -132,7 +132,7 @@ def run():
                         format="%.1f%%"
                     )
                 },
-                use_container_width=True
+                width='stretch'
             )
     
     # Auto-refresh timer

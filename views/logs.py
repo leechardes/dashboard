@@ -13,7 +13,7 @@ def get_log_files():
 def run():
     """Log viewer and analyzer"""
     
-    st.markdown('<div class="main-header"><span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem; color: var(--info-color);">description</span>Visualizador de Logs</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header"><span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem;">description</span>Visualizador de Logs</div>', unsafe_allow_html=True)
     
     # Get log files
     with st.spinner("Escaneando arquivos de log..."):
@@ -25,7 +25,7 @@ def run():
         return
     
     # Sidebar controls
-    st.sidebar.subheader("Filtros de Log")
+    st.sidebar.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>filter_alt</span>Filtros de Log", unsafe_allow_html=True)
     
     # Search in log content
     search_term = st.sidebar.text_input("Buscar nos logs", placeholder="Digite para buscar...")
@@ -132,7 +132,7 @@ def run():
     
     # Log content display
     st.markdown("---")
-    st.subheader("Conteúdo do Log")
+    st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>article</span>Conteúdo do Log", unsafe_allow_html=True)
     
     try:
         log_path = selected_log['path']
@@ -192,7 +192,7 @@ def run():
             
             with col2:
                 warn_count = sum(1 for line in display_lines if "WARN" in line.upper())
-                st.metric("Warnings", warn_count)
+                st.metric("Avisos", warn_count)
             
             with col3:
                 info_count = sum(1 for line in display_lines if "INFO" in line.upper())

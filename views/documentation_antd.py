@@ -77,7 +77,7 @@ def render_tree_streamlit(docs):
             if st.button(
                 file_label,
                 key=f"file_{node_key}",
-                use_container_width=True,
+                width='stretch',
                 help=f"Caminho: {doc['path']} | Modificado: {doc.get('modified', 'N/A')}"
             ):
                 st.session_state.selected_doc = doc
@@ -109,7 +109,7 @@ def count_docs_in_node(node):
 
 def render_agent_metrics():
     """Render agent verification metrics"""
-    st.markdown("### <span class='material-symbols-outlined'>smart_toy</span> Agent Documentation Status", unsafe_allow_html=True)
+    st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>smart_toy</span>Status da Documentação dos Agentes", unsafe_allow_html=True)
     
     # Get data
     projects, total_stats = agent_scanner.scan_all_verification_jsons()
@@ -123,27 +123,27 @@ def render_agent_metrics():
     
     with col1:
         st.metric(
-            "Total Projects",
+            "Total de Projetos",
             total_stats['total_projects'],
-            delta=f"{total_stats['projects_complete']} complete"
+            delta=f"{total_stats['projects_complete']} completos"
         )
     
     with col2:
         st.metric(
-            "Total Files",
+            "Total de Arquivos",
             total_stats['total_files']
         )
     
     with col3:
         st.metric(
-            "Verified Files",
+            "Arquivos Verificados",
             total_stats['verified_files'],
             delta=f"{total_stats['verified_files']/total_stats['total_files']*100:.1f}%" if total_stats['total_files'] > 0 else "0%"
         )
     
     with col4:
         st.metric(
-            "Pending Files",
+            "Arquivos Pendentes",
             total_stats['pending_files'],
             delta="-" + str(total_stats['pending_files']) if total_stats['pending_files'] > 0 else "OK",
             delta_color="inverse"
@@ -152,9 +152,9 @@ def render_agent_metrics():
     with col5:
         overall_completion = (total_stats['verified_files'] / total_stats['total_files'] * 100) if total_stats['total_files'] > 0 else 0
         st.metric(
-            "Overall Progress",
+            "Progresso Geral",
             f"{overall_completion:.1f}%",
-            delta="Complete" if overall_completion == 100 else f"{100-overall_completion:.1f}% to go"
+            delta="Completo" if overall_completion == 100 else f"{100-overall_completion:.1f}% restantes"
         )
     
     # Create visualizations
@@ -163,16 +163,16 @@ def render_agent_metrics():
     with col1:
         # Pie chart for overall status
         fig_pie = go.Figure(data=[go.Pie(
-            labels=['Verified', 'Pending'],
+            labels=['Verificados', 'Pendentes'],
             values=[total_stats['verified_files'], total_stats['pending_files']],
             hole=.3,
             marker_colors=['#00CC88', '#FF6B6B']
         )])
         fig_pie.update_layout(
-            title="Overall File Verification Status",
+            title="Status Geral da Verificação de Arquivos",
             height=300
         )
-        st.plotly_chart(fig_pie, use_container_width=True)
+        st.plotly_chart(fig_pie, width='stretch')
     
     with col2:
         # Bar chart for projects status
@@ -185,19 +185,19 @@ def render_agent_metrics():
                     df_top_pending,
                     x='project_name',
                     y='pending_files',
-                    title="Top 10 Projects with Pending Files",
+                    title="Top 10 Projetos com Arquivos Pendentes",
                     color='pending_files',
                     color_continuous_scale='Reds',
-                    labels={'pending_files': 'Pending Files', 'project_name': 'Project'}
+                    labels={'pending_files': 'Arquivos Pendentes', 'project_name': 'Projeto'}
                 )
                 fig_bar.update_layout(
                     xaxis_tickangle=-45,
                     height=300
                 )
-                st.plotly_chart(fig_bar, use_container_width=True)
+                st.plotly_chart(fig_bar, width='stretch')
     
     # Projects table with progress
-    st.markdown("#### <span class='material-symbols-outlined'>analytics</span> Projects Documentation Status", unsafe_allow_html=True)
+    st.markdown("#### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>analytics</span>Status da Documentação dos Projetos", unsafe_allow_html=True)
     
     if projects:
         df = pd.DataFrame(projects)
@@ -205,15 +205,15 @@ def render_agent_metrics():
         # Format the dataframe for display
         df_display = df[['project_name', 'total_files', 'verified_files', 
                         'pending_files', 'completion_percentage', 'last_scan']]
-        df_display.columns = ['Project', 'Total', 'Verified', 'Pending', 'Progress %', 'Last Scan']
+        df_display.columns = ['Projeto', 'Total', 'Verificados', 'Pendentes', 'Progresso %', 'Última Verificação']
         
         # Sort by pending files
-        df_display = df_display.sort_values('Pending', ascending=False)
+        df_display = df_display.sort_values('Pendentes', ascending=False)
         
         # Display with styling
         st.dataframe(
             df_display,
-            use_container_width=True,
+            width='stretch',
             height=300,
             column_config={
                 "Progress %": st.column_config.ProgressColumn(
@@ -227,17 +227,17 @@ def render_agent_metrics():
 
 def render_action_buttons():
     """Render action buttons for maintenance scripts"""
-    st.markdown("### <span class='material-symbols-outlined'>build</span> Documentation Maintenance Actions", unsafe_allow_html=True)
+    st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>build</span>Ações de Manutenção da Documentação", unsafe_allow_html=True)
     
     scripts_path = Path("/srv/projects/shared/scripts/agents")
     
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.markdown("#### <span class='material-symbols-outlined'>edit_note</span> File Management", unsafe_allow_html=True)
+        st.markdown("#### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>edit_note</span>Gerenciamento de Arquivos", unsafe_allow_html=True)
         
         if st.button(":material/refresh: Standardize Filenames", 
-                    use_container_width=True,
+                    width='stretch',
                     help="Standardize all documentation filenames to UPPERCASE-WITH-HYPHENS"):
             script = scripts_path / "standardize-docs-filenames.sh"
             if script.exists():
@@ -264,10 +264,10 @@ def render_action_buttons():
                 st.error(f"Script not found: {script}")
     
     with col2:
-        st.markdown("#### Update JSONs")
+        st.markdown("#### Atualizar JSONs")
         
-        if st.button("Update Verification JSONs",
-                    use_container_width=True,
+        if st.button(":material/refresh: Atualizar JSONs de Verificação",
+                    width='stretch',
                     help="Scan all projects and update verification JSONs"):
             script = scripts_path / "populate-verification-json.sh"
             if script.exists():
@@ -294,9 +294,9 @@ def render_action_buttons():
             else:
                 st.error(f"Script not found: {script}")
         
-        if st.button("Quick Docs Setup",
-                    use_container_width=True,
-                    help="Quick setup of documentation structure"):
+        if st.button(":material/settings: Configuração Rápida da Documentação",
+                    width='stretch',
+                    help="Configuração rápida da estrutura de documentação"):
             script = scripts_path / "quick-docs-setup.sh"
             if script.exists():
                 with st.spinner("Running quick docs setup..."):
@@ -321,11 +321,11 @@ def render_action_buttons():
                 st.error(f"Script not found: {script}")
     
     with col3:
-        st.markdown("#### Automation")
+        st.markdown("#### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>automation</span>Automação")
         
-        if st.button("Generate Summary",
-                    use_container_width=True,
-                    help="Generate documentation summary"):
+        if st.button(":material/summarize: Gerar Resumo",
+                    width='stretch',
+                    help="Gerar resumo da documentação"):
             script = scripts_path / "summary-docs.sh"
             if script.exists():
                 with st.spinner("Generating summary..."):
@@ -352,7 +352,7 @@ def render_action_buttons():
         # Master Coordinator - with warning
         st.warning("Long running process!")
         if st.button("Run Master Coordinator",
-                    use_container_width=True,
+                    width='stretch',
                     type="primary",
                     help="Run the complete documentation process for all projects"):
             
@@ -368,7 +368,7 @@ def render_action_buttons():
 
 def render_analytics():
     """Render analytics and trends"""
-    st.markdown("### <span class='material-symbols-outlined'>trending_up</span> Documentation Analytics", unsafe_allow_html=True)
+    st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>trending_up</span>Análise da Documentação", unsafe_allow_html=True)
     
     projects, total_stats = agent_scanner.scan_all_verification_jsons()
     
@@ -384,28 +384,28 @@ def render_analytics():
         x='completion_percentage',
         nbins=20,
         title="Distribution of Project Completion",
-        labels={'completion_percentage': 'Completion %', 'count': 'Number of Projects'},
+        labels={'completion_percentage': 'Conclusão %', 'count': 'Número de Projetos'},
         color_discrete_sequence=['#4CAF50']
     )
-    st.plotly_chart(fig_hist, use_container_width=True)
+    st.plotly_chart(fig_hist, width='stretch')
     
-    # Scatter plot - Files vs Completion
+    # Gráfico de dispersão - Arquivos vs Conclusão
     fig_scatter = px.scatter(
         df,
         x='total_files',
         y='completion_percentage',
         size='pending_files',
         color='is_complete',
-        title="Project Size vs Completion",
+        title="Tamanho do Projeto vs Conclusão",
         labels={
-            'total_files': 'Total Files',
-            'completion_percentage': 'Completion %',
-            'is_complete': 'Complete'
+            'total_files': 'Total de Arquivos',
+            'completion_percentage': 'Conclusão %',
+            'is_complete': 'Completo'
         },
         hover_data=['project_name'],
         color_discrete_map={True: '#00CC88', False: '#FF6B6B'}
     )
-    st.plotly_chart(fig_scatter, use_container_width=True)
+    st.plotly_chart(fig_scatter, width='stretch')
     
     # Recent activity
     st.markdown("#### Recent Activity")
@@ -417,14 +417,14 @@ def render_analytics():
 def run():
     """Enhanced documentation view with agent metrics"""
     
-    st.markdown('<div class="main-header"><span class="material-symbols-outlined">library_books</span> Documentation Center</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header"><span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem;">description</span>Documentação</div>', unsafe_allow_html=True)
     
     # Create tabs for different sections
     tab1, tab2, tab3, tab4 = st.tabs([
-        "Documents", 
-        "Agent Status", 
-        "Actions",
-        "Analytics"
+        "Documentos", 
+        "Status dos Agentes", 
+        "Ações",
+        "Estatísticas"
     ])
     
     with tab1:
@@ -441,7 +441,7 @@ def run():
         stats = get_document_statistics(docs)
         
         # Statistics row
-        st.markdown("### <span class='material-symbols-outlined'>analytics</span> Statistics", unsafe_allow_html=True)
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>analytics</span>Estatísticas", unsafe_allow_html=True)
         stat_cols = st.columns(6)
         
         with stat_cols[0]:
@@ -515,7 +515,7 @@ def run():
     tree_col, content_col = st.columns([1, 2])
     
     with tree_col:
-        st.markdown("### <span class='material-symbols-outlined'>folder_open</span> Explorador de Documentos", unsafe_allow_html=True)
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>folder_open</span>Explorador de Documentos", unsafe_allow_html=True)
         
         # Add a container with scroll for the tree
         with st.container():
@@ -620,7 +620,7 @@ def run():
             
             # Show recent documents as suggestions
             if stats['recent']:
-                st.markdown("### <span class='material-symbols-outlined'>history</span> Documentos Recentes", unsafe_allow_html=True)
+                st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>history</span>Documentos Recentes", unsafe_allow_html=True)
                 for i, doc in enumerate(stats['recent'][:5]):
                     doc_icon = ''
                     if 'readme' in doc['name'].lower():
@@ -635,7 +635,7 @@ def run():
                     if st.button(
                         f"{doc_icon} {doc['name']}",
                         key=f"recent_{i}_{doc['path'].replace('/', '_').replace('.', '_')}",
-                        use_container_width=True,
+                        width='stretch',
                         help=f"Projeto: {doc.get('project', 'unknown')} | Tamanho: {doc.get('size_kb', 0):.1f} KB"
                     ):
                         st.session_state.selected_doc = doc

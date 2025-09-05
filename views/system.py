@@ -9,7 +9,7 @@ from utils.system_monitor import get_detailed_system_info, get_network_info, get
 def run():
     """Detailed system information view"""
     
-    st.markdown('<div class="main-header"><span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem; color: var(--info-color);">desktop_windows</span>Informações Detalhadas do Sistema</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header"><span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem;">desktop_windows</span>Informações Detalhadas do Sistema</div>', unsafe_allow_html=True)
     
     # Refresh button
     if st.sidebar.button(":material/refresh: Atualizar Informações"):
@@ -184,7 +184,7 @@ def run():
                 
                 import pandas as pd
                 df = pd.DataFrame(conn_data)
-                st.dataframe(df, width=None)
+                st.dataframe(df, width='stretch')
             else:
                 st.info("Nenhuma conexão ativa encontrada.")
         
@@ -262,7 +262,7 @@ def run():
     
     import pandas as pd
     env_df = pd.DataFrame(env_data)
-    st.dataframe(env_df, width=None)
+    st.dataframe(env_df, width='stretch')
     
     # Auto-refresh option
     st.sidebar.markdown("---")

@@ -17,9 +17,9 @@ def categorize_repositories(repos):
         'web': {'name': 'Web', 'repos': [], 'icon': 'public', 'keywords': ['web', 'angular', 'react', 'vue']},
         'mobile': {'name': 'Mobile', 'repos': [], 'icon': 'smartphone', 'keywords': ['mobile', 'flutter', 'android', 'ios']},
         'desktop': {'name': 'Desktop', 'repos': [], 'icon': 'computer', 'keywords': ['desktop', 'electron']},
-        'services': {'name': 'Services', 'repos': [], 'icon': 'settings', 'keywords': ['service', 'worker', 'job', 'mcp']},
-        'libs': {'name': 'Libraries', 'repos': [], 'icon': 'library_books', 'keywords': ['lib', 'library', 'util', 'helper']},
-        'dashboards': {'name': 'Dashboards', 'repos': [], 'icon': 'dashboard', 'keywords': ['dashboard', 'streamlit', 'panel']},
+        'services': {'name': 'Serviços', 'repos': [], 'icon': 'settings', 'keywords': ['service', 'worker', 'job', 'mcp']},
+        'libs': {'name': 'Bibliotecas', 'repos': [], 'icon': 'library_books', 'keywords': ['lib', 'library', 'util', 'helper']},
+        'dashboards': {'name': 'Painéis', 'repos': [], 'icon': 'dashboard', 'keywords': ['dashboard', 'streamlit', 'panel']},
         'others': {'name': 'Outros', 'repos': [], 'icon': 'inventory_2', 'keywords': []}
     }
     
@@ -265,7 +265,7 @@ def display_repository_card(repo, index):
 def run():
     """Git repositories management view with improved organization"""
     
-    st.markdown('<div class="main-header"><span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem; color: var(--info-color);">source</span>Gerenciador de Repositórios</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header"><span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem;">source</span>Gerenciador de Repositórios</div>', unsafe_allow_html=True)
     
     # Scan for repositories
     with st.spinner("Escaneando repositórios Git..."):
@@ -284,7 +284,7 @@ def run():
     )
     
     # Statistics
-    st.markdown("### Estatísticas")
+    st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>analytics</span>Estatísticas", unsafe_allow_html=True)
     stat_cols = st.columns(6)
     
     with stat_cols[0]:
@@ -419,7 +419,7 @@ def run():
     
     else:
         # Simple list mode
-        st.markdown(f"### Lista de Repositórios ({len(filtered_repos)})")
+        st.markdown(f"### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>list</span>Lista de Repositórios ({len(filtered_repos)})", unsafe_allow_html=True)
         
         for i, repo in enumerate(filtered_repos):
             display_repository_card(repo, i)
