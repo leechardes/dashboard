@@ -150,6 +150,37 @@ def run():
     # Header principal com Material Icon
     st.markdown('<div class="main-header"><span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem;">code</span>Gerenciador Code-Server</div>', unsafe_allow_html=True)
     
+    # Botão para abrir Code-Server no sidebar
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>code</span>Acesso Rápido", unsafe_allow_html=True)
+    
+    # Botão com link direto
+    st.sidebar.markdown("""
+    <a href="http://10.0.10.7:8080" target="_blank" style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background: var(--primary-color);
+        color: white;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    ">
+        <span class="material-icons">open_in_new</span>
+        Abrir Code-Server
+    </a>
+    """, unsafe_allow_html=True)
+    
+    st.sidebar.info("""
+    **URL:** http://10.0.10.7:8080
+    **Login:** Use suas credenciais Linux
+    """)
+    
+    st.sidebar.markdown("---")
+    
     # Botão de atualizar
     if st.sidebar.button(":material/refresh: Atualizar Status"):
         st.rerun()
