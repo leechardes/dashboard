@@ -90,15 +90,15 @@ with st.sidebar:
         st.session_state.refresh_interval = st.slider("Intervalo (s)", 1, 30, st.session_state.refresh_interval)
     
     # Botão refresh manual
-    if st.button("🔄 Refresh Manual"):
+    if st.button(":material/refresh: Refresh Manual"):
         st.session_state.last_refresh = datetime.now()
         st.rerun()
     
     # Ações globais perigosas
     st.markdown("---")
-    st.markdown("### 🚨 Ações Globais")
+    st.markdown("### Ações Globais")
     
-    if st.button("🧹 Limpar Órfãos"):
+    if st.button(":material/cleaning_services: Limpar Órfãos"):
         success, message, killed_pids = claude_actions.clean_orphan_processes()
         if success:
             st.success(f"{message}")
@@ -106,7 +106,7 @@ with st.sidebar:
             st.error(f"{message}")
         st.rerun()
     
-    if st.button("⏰ Limpar Antigos (>2h)"):
+    if st.button(":material/schedule: Limpar Antigos (>2h)"):
         success, message, killed_pids = claude_actions.clean_old_processes(2)
         if success:
             st.success(f"{message}")
@@ -159,7 +159,7 @@ with tab1:
     st.header("Monitor de Processos")
     
     if not processes:
-        st.info("😴 Nenhum processo Claude encontrado no sistema")
+        st.info("Nenhum processo Claude encontrado no sistema")
     else:
         # Filtros
         col1, col2, col3 = st.columns(3)
@@ -240,7 +240,7 @@ with tab1:
                         st.success("Normal")
                 
                 with col7:
-                    if st.button(f"🔴 Kill", key=f"kill_{proc['pid']}"):
+                    if st.button(f":material/stop: Kill", key=f"kill_{proc['pid']}"):
                         success, message = claude_actions.kill_process(proc['pid'])
                         if success:
                             st.success(f"{message}")
@@ -253,9 +253,9 @@ with tab1:
         
         # Ações em lote para usuário selecionado
         if selected_user != "Todos" and filtered_processes:
-            st.markdown("### 🎯 Ações para usuário selecionado")
+            st.markdown("### Ações para usuário selecionado")
             
-            if st.button(f"🔴 Matar todos os processos de {selected_user}"):
+            if st.button(f":material/stop: Matar todos os processos de {selected_user}"):
                 if show_confirmation_dialog(
                     "Confirmar ação destrutiva",
                     f"Tem certeza que deseja matar TODOS os {len(filtered_processes)} processos do usuário {selected_user}?",
@@ -271,16 +271,16 @@ with tab1:
 
 # TAB 2: ANALYTICS
 with tab2:
-    st.header("📈 Analytics & Estatísticas")
+    st.header("Analytics & Estatísticas")
     
     if not processes:
-        st.info("😴 Sem dados para análise - nenhum processo encontrado")
+        st.info("Sem dados para análise - nenhum processo encontrado")
     else:
         # Gráficos em colunas
         col1, col2 = st.columns(2)
         
         with col1:
-            st.subheader("🥧 Distribuição de Memória por Usuário")
+            st.subheader("Distribuição de Memória por Usuário")
             
             if user_ranking:
                 # Gráfico de pizza
@@ -293,7 +293,7 @@ with tab2:
                 )
                 st.plotly_chart(fig_pie, use_container_width=True)
             
-            st.subheader("⏱️ Processos por Tempo de Execução")
+            st.subheader("Processos por Tempo de Execução")
             
             # Histograma de tempo de execução
             runtimes = [proc['runtime_minutes'] for proc in processes]
@@ -306,7 +306,7 @@ with tab2:
             st.plotly_chart(fig_hist, use_container_width=True)
         
         with col2:
-            st.subheader("📊 Ranking de Usuários")
+            st.subheader("Ranking de Usuários")
             
             # Tabela de ranking
             if user_ranking:
@@ -326,7 +326,7 @@ with tab2:
                     hide_index=True
                 )
             
-            st.subheader("🎯 Estatísticas Gerais")
+            st.subheader("Estatísticas Gerais")
             
             # Cards de estatísticas
             stats_col1, stats_col2 = st.columns(2)
@@ -342,7 +342,7 @@ with tab2:
                 st.metric("Processos órfãos", orphan_processes)
         
         # Gráfico de linha temporal (simulado)
-        st.subheader("📈 Uso de Recursos ao Longo do Tempo")
+        st.subheader("Uso de Recursos ao Longo do Tempo")
         
         # Para demonstração, criar dados simulados
         import numpy as np
@@ -371,27 +371,27 @@ with tab2:
 
 # TAB 3: CONFIG
 with tab3:
-    st.header("⚙️ Configurações")
+    st.header("Configurações")
     
     # Subtabs para diferentes tipos de configuração
-    config_tab1, config_tab2, config_tab3 = st.tabs(["👤 Usuários", "🌍 Global", "🔒 Segurança"])
+    config_tab1, config_tab2, config_tab3 = st.tabs(["Usuários", "Global", "Segurança"])
     
     with config_tab1:
-        st.subheader("👤 Configurações por Usuário")
+        st.subheader("Configurações por Usuário")
         
         # Seção para adicionar/editar limites de usuário
-        st.markdown("#### 🔄 Gerenciamento de Usuários")
+        st.markdown("#### Gerenciamento de Usuários")
         
         # Botões de ação
         col_btn1, col_btn2, col_btn3 = st.columns(3)
         
         with col_btn1:
-            if st.button("🔄 Carregar Usuários do Sistema", use_container_width=True):
+            if st.button(":material/refresh: Carregar Usuários do Sistema", use_container_width=True):
                 st.session_state['load_system_users'] = True
                 st.rerun()
                 
         with col_btn2:
-            if st.button("📋 Aplicar Default para Todos", use_container_width=True):
+            if st.button(":material/assignment: Aplicar Default para Todos", use_container_width=True):
                 # Pegar configuração default
                 default_config = claude_config.get_user_limit("default")
                 system_users = get_system_users()
@@ -410,21 +410,21 @@ with tab3:
                         if success:
                             applied_count += 1
                 
-                st.success(f"✅ Configuração default aplicada para {applied_count} usuários")
+                st.success(f"Configuração default aplicada para {applied_count} usuários")
                 st.rerun()
                 
         with col_btn3:
-            if st.button("🗑️ Limpar Configurações", use_container_width=True):
+            if st.button(":material/delete: Limpar Configurações", use_container_width=True):
                 if st.checkbox("Confirmo que quero limpar todas as configurações"):
                     # Resetar para apenas default
                     claude_config.reset_to_defaults()
-                    st.success("✅ Configurações resetadas")
+                    st.success("Configurações resetadas")
                     st.rerun()
         
         st.markdown("---")
         
         # Seção de adicionar/editar usuário
-        st.markdown("#### ➕ Adicionar/Editar Configuração de Usuário")
+        st.markdown("#### Adicionar/Editar Configuração de Usuário")
         
         # Pegar valores default da configuração
         default_config = claude_config.get_user_limit("default")
@@ -480,7 +480,7 @@ with tab3:
                 value=default_runtime
             )
         
-        if st.button("💾 Salvar Configuração", type="primary", use_container_width=True):
+        if st.button(":material/save: Salvar Configuração", type="primary", use_container_width=True):
             if username_input and username_input not in ['Selecione...', 'Digite manualmente...']:
                 success = claude_config.set_user_limit(
                     username_input, 
@@ -489,15 +489,15 @@ with tab3:
                     max_runtime_hours
                 )
                 if success:
-                    st.success(f"✅ Configuração salva para {username_input}")
+                    st.success(f"Configuração salva para {username_input}")
                 else:
-                    st.error("❌ Erro ao salvar configuração")
+                    st.error("Erro ao salvar configuração")
                 st.rerun()
             else:
-                st.warning("⚠️ Selecione ou digite um nome de usuário")
+                st.warning("Selecione ou digite um nome de usuário")
         
         st.markdown("---")
-        st.markdown("#### 👥 Usuários Configurados")
+        st.markdown("#### Usuários Configurados")
         
         # Mostrar configurações atuais
         user_limits = claude_config.get_all_user_limits()
@@ -528,7 +528,7 @@ with tab3:
                     col_act1, col_act2 = st.columns(2)
                     with col_act1:
                         if username != 'default':
-                            if st.button(f"🔄 Resetar para Default", key=f"reset_{username}"):
+                            if st.button(f":material/refresh: Resetar para Default", key=f"reset_{username}"):
                                 # Aplicar configuração default
                                 success = claude_config.set_user_limit(
                                     username,
@@ -537,19 +537,19 @@ with tab3:
                                     default_config.get('max_runtime_hours', 24)
                                 )
                                 if success:
-                                    st.success(f"✅ {username} resetado para default")
+                                    st.success(f"{username} resetado para default")
                                     st.rerun()
                     
                     with col_act2:
                         if username != 'default':
-                            if st.button(f"🗑️ Remover", key=f"remove_{username}"):
+                            if st.button(f":material/delete: Remover", key=f"remove_{username}"):
                                 if claude_config.remove_user_limit(username):
-                                    st.success(f"✅ Configuração de {username} removida")
+                                    st.success(f"Configuração de {username} removida")
                                     st.rerun()
         else:
             # Se poucos usuários, usar expanders
             for username, config in user_limits.items():
-                icon = "⚙️" if username == "default" else "👤"
+                icon = ":material/settings:" if username == "default" else ":material/person:"
                 with st.expander(f"{icon} {username}"):
                     col1, col2, col3, col4 = st.columns(4)
                     
@@ -590,7 +590,7 @@ with tab3:
                     with col4:
                         st.write(f"**Prioridade:** {config.get('priority', 'normal')}")
                         if username != 'default':
-                            if st.button(f"💾 Atualizar", key=f"update_{username}"):
+                            if st.button(f":material/save: Atualizar", key=f"update_{username}"):
                                 success = claude_config.set_user_limit(
                                     username,
                                     new_mem,
@@ -598,21 +598,21 @@ with tab3:
                                     new_time
                                 )
                                 if success:
-                                    st.success(f"✅ {username} atualizado")
+                                    st.success(f"{username} atualizado")
                                     st.rerun()
                 
                 with col3:
                     if username != "default":
-                        if st.button(f"🗑️ Remover", key=f"remove_{username}"):
+                        if st.button(f":material/delete: Remover", key=f"remove_{username}"):
                             success = claude_config.remove_user_limit(username)
                             if success:
-                                st.success(f"✅ Configuração removida para {username}")
+                                st.success(f"Configuração removida para {username}")
                             else:
-                                st.error("❌ Erro ao remover configuração")
+                                st.error("Erro ao remover configuração")
                             st.rerun()
     
     with config_tab2:
-        st.subheader("🌍 Configurações Globais")
+        st.subheader("Configurações Globais")
         
         col1, col2 = st.columns(2)
         
@@ -668,7 +668,7 @@ with tab3:
                 value=claude_config.get_global_setting("log_retention_days") or 7
             )
         
-        if st.button("💾 Salvar Configurações Globais"):
+        if st.button(":material/save: Salvar Configurações Globais"):
             success = True
             success &= claude_config.set_global_setting("auto_cleanup_enabled", auto_cleanup)
             success &= claude_config.set_global_setting("auto_cleanup_interval_minutes", cleanup_interval)
@@ -680,12 +680,12 @@ with tab3:
             success &= claude_config.set_global_setting("log_retention_days", log_retention_days)
             
             if success:
-                st.success("✅ Configurações globais salvas")
+                st.success("Configurações globais salvas")
             else:
-                st.error("❌ Erro ao salvar algumas configurações")
+                st.error("Erro ao salvar algumas configurações")
     
     with config_tab3:
-        st.subheader("🔒 Configurações de Segurança")
+        st.subheader("Configurações de Segurança")
         
         col1, col2 = st.columns(2)
         
@@ -710,27 +710,27 @@ with tab3:
         with col2:
             st.markdown("#### Exportar/Importar Config")
             
-            if st.button("📤 Exportar Configuração"):
+            if st.button(":material/upload: Exportar Configuração"):
                 config_json = claude_config.export_config()
                 st.download_button(
-                    label="💾 Baixar arquivo de configuração",
+                    label=":material/save: Baixar arquivo de configuração",
                     data=config_json,
                     file_name=f"claude_config_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
                     mime="application/json"
                 )
             
-            uploaded_file = st.file_uploader("📥 Importar Configuração", type=['json'])
+            uploaded_file = st.file_uploader(":material/download: Importar Configuração", type=['json'])
             if uploaded_file is not None:
                 config_content = uploaded_file.read().decode('utf-8')
-                if st.button("⚡ Aplicar Configuração Importada"):
+                if st.button(":material/bolt: Aplicar Configuração Importada"):
                     success = claude_config.import_config(config_content)
                     if success:
-                        st.success("✅ Configuração importada com sucesso")
+                        st.success("Configuração importada com sucesso")
                         st.rerun()
                     else:
-                        st.error("❌ Erro ao importar configuração")
+                        st.error("Erro ao importar configuração")
             
-            if st.button("🔄 Resetar para Padrão"):
+            if st.button(":material/refresh: Resetar para Padrão"):
                 if show_confirmation_dialog(
                     "Resetar Configuração",
                     "Tem certeza que deseja resetar TODAS as configurações para os valores padrão? Esta ação não pode ser desfeita.",
@@ -738,15 +738,15 @@ with tab3:
                 ):
                     success = claude_config.reset_to_default()
                     if success:
-                        st.success("✅ Configuração resetada para padrão")
+                        st.success("Configuração resetada para padrão")
                     else:
-                        st.error("❌ Erro ao resetar configuração")
+                        st.error("Erro ao resetar configuração")
                     st.session_state["confirmed_reset_config"] = False
                     st.rerun()
 
 # TAB 4: LOGS
 with tab4:
-    st.header("📋 Logs de Ações")
+    st.header("Logs de Ações")
     
     col1, col2 = st.columns([3, 1])
     
@@ -755,10 +755,10 @@ with tab4:
         
         log_lines = st.number_input("Linhas para exibir:", min_value=10, max_value=1000, value=100)
         
-        if st.button("🔄 Atualizar Logs"):
+        if st.button(":material/refresh: Atualizar Logs"):
             st.rerun()
         
-        if st.button("🧹 Limpar Logs Antigos"):
+        if st.button(":material/cleaning_services: Limpar Logs Antigos"):
             success, message = claude_actions.clear_old_logs(7)
             if success:
                 st.success(f"{message}")
@@ -773,7 +773,7 @@ with tab4:
         logs = claude_actions.get_action_logs(log_lines)
         
         if not logs:
-            st.info("📝 Nenhum log encontrado")
+            st.info("Nenhum log encontrado")
         else:
             # Filtros de log
             filter_col1, filter_col2, filter_col3 = st.columns(3)
@@ -807,11 +807,11 @@ with tab4:
             with log_container:
                 for log_line in reversed(filtered_logs[-50:]):  # Mostrar últimas 50 linhas filtradas
                     if "ERROR" in log_line or "FALHOU" in log_line:
-                        st.error(f"🔴 {log_line}")
+                        st.error(f"{log_line}")
                     elif "SUCCESS" in log_line:
-                        st.success(f"✅ {log_line}")
+                        st.success(f"{log_line}")
                     else:
-                        st.info(f"ℹ️ {log_line}")
+                        st.info(f"{log_line}")
 
 # Auto-refresh logic
 if st.session_state.auto_refresh:
@@ -824,7 +824,7 @@ if st.session_state.auto_refresh:
     
     # Mostrar contador regressivo
     remaining = st.session_state.refresh_interval - time_diff
-    st.sidebar.info(f"⏱️ Próximo refresh em {remaining}s")
+    st.sidebar.info(f"Próximo refresh em {remaining}s")
     
     # JavaScript para auto-refresh
     st.markdown(f"""

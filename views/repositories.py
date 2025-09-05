@@ -151,7 +151,7 @@ def display_repository_card(repo, index):
                 if branches:
                     st.subheader("Branches Disponíveis")
                     for branch in branches:
-                        current = "→ " if branch == repo.get('current_branch') else "  "
+                        current = "> " if branch == repo.get('current_branch') else "  "
                         st.text(f"{current}{branch}")
                 else:
                     st.info("Nenhuma branch encontrada")

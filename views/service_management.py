@@ -126,7 +126,7 @@ def run():
         st.subheader("Service Status")
         
         # Refresh button
-        if st.button("🔄 Refresh Status", key="refresh_status"):
+        if st.button(":material/refresh: Refresh Status", key="refresh_status"):
             st.rerun()
         
         # Get current status
@@ -194,7 +194,7 @@ def run():
                         st.rerun()
         
         with col3:
-            if st.button("🔄 Restart", key="restart_service", use_container_width=True):
+            if st.button(":material/refresh: Restart", key="restart_service", use_container_width=True):
                 with st.spinner("Restarting service..."):
                     success, stdout, stderr = run_command("sudo systemctl restart streamlit-dashboard")
                     if success:
@@ -231,7 +231,7 @@ def run():
             
             if is_enabled:
                 st.success("Auto-start is enabled")
-                if st.button("🚫 Disable Auto-start"):
+                if st.button(":material/block: Disable Auto-start"):
                     success, stdout, stderr = run_command("sudo systemctl disable streamlit-dashboard")
                     if success:
                         st.success("Auto-start disabled")
@@ -267,7 +267,7 @@ def run():
                             st.error(f"Failed: {stderr}")
             else:
                 st.warning("Service not installed")
-                if st.button("📦 Install Service"):
+                if st.button(":material/inventory_2: Install Service"):
                     success, stdout, stderr = run_command("cd /srv/projects/shared/dashboard && sudo make install-service")
                     if success:
                         st.success("Service installed successfully!")
@@ -339,7 +339,7 @@ def run():
                 st.warning("You need to restart the service for changes to take effect")
                 
                 # Offer to restart
-                if st.button("🔄 Restart Service Now"):
+                if st.button(":material/refresh: Restart Service Now"):
                     success, stdout, stderr = run_command("sudo systemctl restart streamlit-dashboard")
                     if success:
                         st.success("Service restarted with new configuration!")
@@ -351,13 +351,13 @@ def run():
                 st.error("Failed to save configuration")
         
         # Show current config file
-        with st.expander("📄 View .env File"):
+        with st.expander("View .env File"):
             if os.path.exists("/srv/projects/shared/dashboard/.env"):
                 with open("/srv/projects/shared/dashboard/.env", 'r') as f:
                     st.code(f.read())
         
         # Show service file
-        with st.expander("📄 View Service File"):
+        with st.expander("View Service File"):
             service_file = "/etc/systemd/system/streamlit-dashboard.service"
             if os.path.exists(service_file):
                 success, stdout, stderr = run_command(f"cat {service_file}")
@@ -391,7 +391,7 @@ def run():
             )
         
         with col3:
-            if st.button("🔄 Refresh Logs", key="refresh_logs"):
+            if st.button(":material/refresh: Refresh Logs", key="refresh_logs"):
                 st.rerun()
         
         # Auto-refresh option
@@ -423,7 +423,7 @@ def run():
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            if st.button("🧹 Clear Application Logs"):
+            if st.button(":material/cleaning_services: Clear Application Logs"):
                 if st.checkbox("I want to clear the logs"):
                     log_file = "/srv/projects/shared/dashboard/streamlit.log"
                     if os.path.exists(log_file):

@@ -68,7 +68,7 @@ def render_tree_streamlit(docs):
                 'Testing': '',
                 'Environment': ''
             }
-            doc_icon = doc_icons.get(doc.get('doc_type', 'Documentation'), '📄')
+            doc_icon = doc_icons.get(doc.get('doc_type', 'Documentation'), '')
             
             # Create button for file with indentation
             indent = "　" * (level + 1)
@@ -145,7 +145,7 @@ def render_agent_metrics():
         st.metric(
             "Pending Files",
             total_stats['pending_files'],
-            delta="-" + str(total_stats['pending_files']) if total_stats['pending_files'] > 0 else "✓",
+            delta="-" + str(total_stats['pending_files']) if total_stats['pending_files'] > 0 else "OK",
             delta_color="inverse"
         )
     
@@ -236,7 +236,7 @@ def render_action_buttons():
     with col1:
         st.markdown("#### <span class='material-symbols-outlined'>edit_note</span> File Management", unsafe_allow_html=True)
         
-        if st.button("🔄 Standardize Filenames", 
+        if st.button(":material/refresh: Standardize Filenames", 
                     use_container_width=True,
                     help="Standardize all documentation filenames to UPPERCASE-WITH-HYPHENS"):
             script = scripts_path / "standardize-docs-filenames.sh"
@@ -264,7 +264,7 @@ def render_action_buttons():
                 st.error(f"Script not found: {script}")
     
     with col2:
-        st.markdown("#### 🔄 Update JSONs")
+        st.markdown("#### Update JSONs")
         
         if st.button("Update Verification JSONs",
                     use_container_width=True,
@@ -321,7 +321,7 @@ def render_action_buttons():
                 st.error(f"Script not found: {script}")
     
     with col3:
-        st.markdown("#### 🤖 Automation")
+        st.markdown("#### Automation")
         
         if st.button("Generate Summary",
                     use_container_width=True,
@@ -361,7 +361,7 @@ def render_action_buttons():
                 st.warning("This process can take a very long time (30+ minutes)")
                 if st.checkbox("I understand this will take a long time"):
                     if st.button("Confirm and Run", type="primary"):
-                        st.info("🔄 Starting Master Coordinator...")
+                        st.info("Starting Master Coordinator...")
                         st.warning("This process runs in background. Check terminal for progress.")
                         # TODO: Implement async execution with progress tracking
                         st.info("Feature in development - use terminal for now")
@@ -408,7 +408,7 @@ def render_analytics():
     st.plotly_chart(fig_scatter, use_container_width=True)
     
     # Recent activity
-    st.markdown("#### 🕐 Recent Activity")
+    st.markdown("#### Recent Activity")
     recent = agent_scanner.get_recent_activity(5)
     for project in recent:
         if project['last_scan'] != 'N/A':
@@ -445,7 +445,7 @@ def run():
         stat_cols = st.columns(6)
         
         with stat_cols[0]:
-            st.metric("📄 Total", stats['total'])
+            st.metric("Total", stats['total'])
     
     with stat_cols[1]:
         st.metric("Projetos", len(stats['by_project']))
@@ -460,7 +460,7 @@ def run():
         st.metric("Tamanho", f"{stats['total_size_mb']:.1f} MB")
     
     with stat_cols[5]:
-        if st.button("🔄 Atualizar"):
+        if st.button(":material/refresh: Atualizar"):
             st.cache_data.clear()
             st.rerun()
     
@@ -479,7 +479,7 @@ def run():
     with col2:
         # Project filter
         project_options = ["Todos"] + sorted(list(stats['by_project'].keys()))
-        selected_project = st.selectbox("🏢 Projeto", project_options)
+        selected_project = st.selectbox("Projeto", project_options)
     
     with col3:
         # Category filter (apis, web, mobile, etc)
@@ -489,7 +489,7 @@ def run():
     with col4:
         # Extension filter
         ext_options = ["Todas"] + sorted(list(stats['by_extension'].keys()))
-        selected_ext = st.selectbox("📎 Extensão", ext_options)
+        selected_ext = st.selectbox("Extensão", ext_options)
     
     # Apply filters
     filtered_docs = docs
@@ -553,7 +553,7 @@ def run():
                 st.warning("Nenhum documento encontrado com os filtros aplicados.")
     
     with content_col:
-        st.markdown("### 📖 Visualização")
+        st.markdown("### Visualização")
         
         # Check if a document is selected
         if 'selected_doc' in st.session_state and st.session_state.get('show_inline', False):
@@ -570,7 +570,7 @@ def run():
             """)
             
             # Show full path in expander
-            with st.expander("📍 Caminho completo"):
+            with st.expander("Caminho completo"):
                 st.code(doc['path'])
             
             # Render the document content
@@ -598,7 +598,7 @@ def run():
                     st.success("Caminho exibido acima para copiar!")
             
             with col2:
-                if st.button("🔄 Recarregar"):
+                if st.button(":material/refresh: Recarregar"):
                     st.rerun()
             
             with col3:
@@ -610,7 +610,7 @@ def run():
         else:
             # No document selected
             st.info("""
-            👈 **Navegue pela árvore de documentos**
+            **Navegue pela árvore de documentos**
             
             • Clique nas pastas para expandir/colapsar
             • Clique nos arquivos para visualizar
@@ -622,9 +622,9 @@ def run():
             if stats['recent']:
                 st.markdown("### <span class='material-symbols-outlined'>history</span> Documentos Recentes", unsafe_allow_html=True)
                 for i, doc in enumerate(stats['recent'][:5]):
-                    doc_icon = '📄'
+                    doc_icon = ''
                     if 'readme' in doc['name'].lower():
-                        doc_icon = '📖'
+                        doc_icon = ''
                     elif 'license' in doc['name'].lower():
                         doc_icon = ''
                     elif 'changelog' in doc['name'].lower():

@@ -30,7 +30,7 @@ def run():
     </style>
     """, unsafe_allow_html=True)
     
-    if st.sidebar.button("🔄 Atualizar Dados"):  # Keep emoji for button compatibility
+    if st.sidebar.button(":material/refresh: Atualizar Dados"):
         st.rerun()
     
     # System overview metrics

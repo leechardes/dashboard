@@ -136,7 +136,7 @@ def run():
     net_col1, net_col2 = st.columns(2)
     
     with net_col1:
-        st.markdown("**🔌 Interfaces de Rede:**")
+        st.markdown("**Interfaces de Rede:**")
         for interface, addresses in network_info['interfaces'].items():
             st.text(f"• {interface}")
             for addr in addresses:
@@ -203,12 +203,12 @@ def run():
         sleeping_processes = len([p for p in psutil.process_iter() if p.status() == 'sleeping'])
         
         st.metric("Total de Processos", total_processes)
-        st.metric("🏃 Em Execução", running_processes)
-        st.metric("😴 Dormindo", sleeping_processes)
+        st.metric("Em Execução", running_processes)
+        st.metric("Dormindo", sleeping_processes)
     
     with process_col2:
         # Top processes by memory
-        st.markdown("**🔝 Top 5 Processos (Memória):**")
+        st.markdown("**Top 5 Processos (Memória):**")
         try:
             processes = []
             for proc in psutil.process_iter(['pid', 'name', 'memory_percent']):

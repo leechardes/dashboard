@@ -65,7 +65,7 @@ def create_status_metric(title, status, icon="analytics"):
         <div class="material-icons" style="font-size: 1.2rem; color: var(--text-color);">{icon}</div>
         <div>
             <div style="font-weight: 600; color: var(--text-color);">{title}</div>
-            <div style="color: {color}; font-size: 0.9rem;">● {status.upper()}</div>
+            <div style="color: {color}; font-size: 0.9rem;">{status.upper()}</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
