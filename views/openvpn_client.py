@@ -91,11 +91,111 @@ def run():
         autostart_color = "var(--success-color)" if autostart else "var(--warning-color)"
         create_metric_card("Auto-Início", autostart_label, "power_settings_new", autostart_color)
     
-    # Seção de configuração OpenVPN
+    # Criar abas para organizar a interface
     st.markdown("---")
-    st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>vpn_key</span>Configuração OpenVPN", unsafe_allow_html=True)
     
-    with st.expander("⚙️ Configurar Credenciais e Arquivo OpenVPN"):
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+        "Controle",
+        "Configuração", 
+        "Rotas",
+        "MikroTik",
+        "Monitoramento"
+    ])
+    
+    # Tab 1 - Controle do Serviço
+    with tab1:
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>settings</span>Controle do Serviço", unsafe_allow_html=True)
+        
+        # Verificar se arquivo de autenticação existe
+        auth_file_path = Path("/etc/openvpn/client-auth.txt")
+        config_file_path = Path("/etc/openvpn/client.conf")
+        
+        if not auth_file_path.exists():
+            st.error("**ATENÇÃO:** Arquivo de credenciais não encontrado! Configure na aba 'Configuração'")
+        
+        if not config_file_path.exists() or config_file_path.stat().st_size == 0:
+            st.error("**ATENÇÃO:** Arquivo de configuração não encontrado ou vazio! Faça upload na aba 'Configuração'")
+        
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            if st.button(":material/play_arrow: Iniciar VPN", use_container_width=True, key="start_vpn_tab"):
+                with st.spinner("Iniciando VPN..."):
+                    if vpn_manager.start():
+                        st.success("VPN iniciada com sucesso")
+                        time.sleep(2)
+                        st.rerun()
+                    else:
+                        st.error("Erro ao iniciar VPN")
+        
+        with col2:
+            if st.button(":material/stop: Parar VPN", use_container_width=True, key="stop_vpn_tab"):
+                if vpn_manager.stop():
+                    st.warning("VPN parada")
+                    st.rerun()
+                else:
+                    st.error("Erro ao parar VPN")
+        
+        with col3:
+            if st.button(":material/restart_alt: Reiniciar VPN", use_container_width=True, key="restart_vpn_tab"):
+                with st.spinner("Reiniciando VPN..."):
+                    if vpn_manager.restart():
+                        st.success("✅ VPN reiniciada")
+                        time.sleep(2)
+                        st.rerun()
+                    else:
+                        st.error("❌ Erro ao reiniciar VPN")
+        
+        with col4:
+            if st.button(":material/description: Ver Logs", use_container_width=True, key="view_logs_tab"):
+                st.session_state['show_logs'] = True
+        
+        # Mostrar logs se o botão foi clicado
+        if st.session_state.get('show_logs', False):
+            st.markdown("---")
+            st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>description</span>Logs do Sistema", unsafe_allow_html=True)
+            
+            # Opções de visualização de logs
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                log_lines = st.slider("Número de linhas", 10, 100, 50, step=10)
+            with col2:
+                if st.button(":material/refresh: Atualizar Logs"):
+                    st.rerun()
+            
+            # Buscar e exibir logs
+            logs = vpn_manager.get_logs(lines=log_lines)
+            st.code(logs, language="bash")
+            
+            # Botão para ocultar logs
+            if st.button(":material/close: Fechar Logs"):
+                st.session_state['show_logs'] = False
+                st.rerun()
+        
+        # Auto-início
+        st.markdown("---")
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>power_settings_new</span>Configuração de Auto-Início", unsafe_allow_html=True)
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            autostart = vpn_manager.is_autostart_enabled()
+            if autostart:
+                st.success("✅ Auto-início está ATIVO")
+                if st.button(":material/power_settings_new: Desabilitar Auto-Início", use_container_width=True):
+                    if vpn_manager.disable_autostart():
+                        st.success("Auto-início desabilitado")
+                        st.rerun()
+            else:
+                st.warning("⚠️ Auto-início está INATIVO")
+                if st.button(":material/power_settings_new: Habilitar Auto-Início", use_container_width=True):
+                    if vpn_manager.enable_autostart():
+                        st.success("Auto-início habilitado")
+                        st.rerun()
+    
+    # Tab 2 - Configuração
+    with tab2:
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>vpn_key</span>Configuração OpenVPN", unsafe_allow_html=True)
+        
         col1, col2 = st.columns(2)
         
         with col1:
@@ -105,6 +205,9 @@ def run():
             
             if st.button(":material/save: Salvar Credenciais", use_container_width=True):
                 if vpn_username and vpn_password:
+                    # Criar diretório /etc/openvpn se não existir
+                    subprocess.run(['sudo', 'mkdir', '-p', '/etc/openvpn'], check=True)
+                    
                     # Salvar credenciais em arquivo seguro
                     auth_file = Path("/etc/openvpn/client-auth.txt")
                     try:
@@ -153,6 +256,9 @@ def run():
             if uploaded_file is not None:
                 if st.button(":material/upload: Aplicar Configuração", use_container_width=True):
                     try:
+                        # Criar diretório /etc/openvpn se não existir
+                        subprocess.run(['sudo', 'mkdir', '-p', '/etc/openvpn'], check=True)
+                        
                         # Ler conteúdo do arquivo
                         ovpn_content = uploaded_file.read().decode('utf-8')
                         
@@ -180,142 +286,66 @@ def run():
                     except Exception as e:
                         st.error(f"Erro ao processar arquivo: {str(e)}")
     
-    # Seção de controle do serviço
-    st.markdown("---")
-    st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>settings</span>Controle do Serviço", unsafe_allow_html=True)
     
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        if st.button(":material/play_arrow: Iniciar VPN", use_container_width=True):
-            with st.spinner("Iniciando VPN..."):
-                if vpn_manager.start():
-                    st.success("✅ VPN iniciada com sucesso")
-                    time.sleep(2)  # Aguardar inicialização
-                    st.rerun()
-                else:
-                    st.error("❌ Erro ao iniciar VPN")
-    
-    with col2:
-        if st.button(":material/stop: Parar VPN", use_container_width=True):
-            with st.spinner("Parando VPN..."):
-                if vpn_manager.stop():
-                    st.warning("⚠️ VPN parada")
-                    st.rerun()
-                else:
-                    st.error("❌ Erro ao parar VPN")
-    
-    with col3:
-        if st.button(":material/restart_alt: Reiniciar VPN", use_container_width=True):
-            with st.spinner("Reiniciando VPN..."):
-                if vpn_manager.restart():
-                    st.success("✅ VPN reiniciada")
-                    time.sleep(3)  # Aguardar reinicialização
-                    st.rerun()
-                else:
-                    st.error("❌ Erro ao reiniciar VPN")
-    
-    with col4:
-        if st.button(":material/refresh: Atualizar Status", use_container_width=True):
-            st.rerun()
-    
-    # Controles adicionais
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        current_autostart = vpn_manager.is_autostart_enabled()
-        if current_autostart:
-            if st.button(":material/power_off: Desabilitar Auto-Início", use_container_width=True):
-                if vpn_manager.disable_autostart():
-                    st.success("Auto-início desabilitado")
-                    st.rerun()
-                else:
-                    st.error("Erro ao desabilitar auto-início")
-        else:
-            if st.button(":material/power: Habilitar Auto-Início", use_container_width=True):
-                if vpn_manager.enable_autostart():
-                    st.success("Auto-início habilitado")
-                    st.rerun()
-                else:
-                    st.error("Erro ao habilitar auto-início")
-    
-    with col2:
-        if st.button(":material/security: Aplicar Regras Firewall", use_container_width=True):
-            with st.spinner("Aplicando regras de firewall..."):
-                success, message = routes.apply_firewall_base_rules()
-                if success:
-                    st.success("✅ Regras aplicadas")
-                    st.code(message)
-                else:
-                    st.error(f"❌ {message}")
-    
-    with col3:
-        if st.button(":material/sync: Sincronizar Sistema", use_container_width=True):
-            with st.spinner("Sincronizando rotas..."):
-                success, message = routes.sync_with_system()
-                if success:
-                    st.success(f"✅ {message}")
-                else:
-                    st.warning(f"⚠️ {message}")
-                st.rerun()
-    
-    # Gerenciamento de rotas
-    st.markdown("---")
-    st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>route</span>Gerenciamento de Rotas", unsafe_allow_html=True)
-    
-    # Adicionar nova rota
-    with st.expander("➕ Adicionar Nova Rota"):
-        col1, col2 = st.columns([2, 1])
-        with col1:
-            new_network = st.text_input(
-                "Rede/CIDR", 
-                placeholder="Ex: 192.168.100.0/24",
-                help="Digite a rede no formato CIDR (ex: 192.168.1.0/24)"
-            )
-            new_description = st.text_input(
-                "Descrição", 
-                placeholder="Ex: Rede do escritório remoto"
-            )
+    # Tab 3 - Gerenciamento de Rotas
+    with tab3:
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>route</span>Gerenciamento de Rotas", unsafe_allow_html=True)
         
-        with col2:
-            st.markdown("<br>", unsafe_allow_html=True)  # Espaçamento
-            if st.button(":material/add: Adicionar Rota", use_container_width=True):
-                if new_network:
-                    with st.spinner("Adicionando rota..."):
-                        success, message = routes.add_route(new_network, new_description)
-                        if success:
-                            st.success(f"✅ {message}")
-                            # Sincronizar com MikroTiks
-                            sync_results = mikrotik.sync_routes(routes.get_active_routes())
-                            for device, (sync_success, sync_msg) in sync_results.items():
-                                if sync_success:
-                                    st.info(f"📡 {device}: {sync_msg}")
-                                else:
-                                    st.warning(f"⚠️ {device}: {sync_msg}")
-                            st.rerun()
+        # Adicionar nova rota
+        with st.expander("➕ Adicionar Nova Rota"):
+            col1, col2 = st.columns([2, 1])
+            with col1:
+                new_network = st.text_input(
+                    "Rede/CIDR", 
+                    placeholder="Ex: 192.168.100.0/24",
+                    help="Digite a rede no formato CIDR (ex: 192.168.1.0/24)"
+                )
+                new_description = st.text_input(
+                    "Descrição", 
+                    placeholder="Ex: Rede do escritório remoto"
+                )
+            
+            with col2:
+                st.markdown("<br>", unsafe_allow_html=True)  # Espaçamento
+                if st.button(":material/add: Adicionar Rota", use_container_width=True):
+                    if new_network:
+                        with st.spinner("Adicionando rota..."):
+                            success, message = routes.add_route(new_network, new_description)
+                            if success:
+                                st.success(f"{message}")
+                                # Sincronizar com MikroTiks
+                                sync_results = mikrotik.sync_routes(routes.get_active_routes())
+                                for device, (sync_success, sync_msg) in sync_results.items():
+                                    if sync_success:
+                                        st.info(f"{device}: {sync_msg}")
+                                    else:
+                                        st.warning(f"{device}: {sync_msg}")
+                                st.rerun()
+                            else:
+                                st.error(f"{message}")
+                    else:
+                        st.error("Digite uma rede válida")
+        
+        # Listar rotas ativas
+        all_routes = routes.get_all_routes()
+        if all_routes:
+            st.markdown("### Rotas Configuradas")
+            
+            for i, route in enumerate(all_routes):
+                with st.container():
+                    col1, col2, col3, col4 = st.columns([2, 2, 1, 1])
+                    
+                    with col1:
+                        if route.get('enabled', True):
+                            st.markdown(f"**{route['network']}** :material/check_circle:")
                         else:
-                            st.error(f"❌ {message}")
-                else:
-                    st.error("Digite uma rede válida")
-    
-    # Listar rotas ativas
-    all_routes = routes.get_all_routes()
-    if all_routes:
-        st.markdown("### 📋 Rotas Configuradas")
-        
-        for i, route in enumerate(all_routes):
-            with st.container():
-                col1, col2, col3, col4 = st.columns([2, 2, 1, 1])
-                
-                with col1:
-                    status_icon = "✅" if route.get('enabled', True) else "❌"
-                    st.markdown(f"**{status_icon} {route['network']}**")
-                    if route.get('description'):
-                        st.caption(route['description'])
-                
-                with col2:
-                    gateway = route.get('gateway', 'N/A')
-                    st.text(f"Gateway: {gateway}")
+                            st.markdown(f"**{route['network']}** :material/cancel:")
+                        if route.get('description'):
+                            st.caption(route['description'])
+                    
+                    with col2:
+                        gateway = route.get('gateway', 'N/A')
+                        st.text(f"Gateway: {gateway}")
                     
                     created = route.get('created', '')
                     if created:
@@ -349,21 +379,21 @@ def run():
                                 st.rerun()
                             else:
                                 st.error(message)
-                
-                st.markdown("---")
-    else:
-        st.info("Nenhuma rota configurada. Adicione a primeira rota acima.")
+                    
+                    st.markdown("---")
+        else:
+            st.info("Nenhuma rota configurada. Adicione a primeira rota acima.")
     
-    # Dispositivos MikroTik
-    st.markdown("---")
-    st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>router</span>Dispositivos MikroTik", unsafe_allow_html=True)
-    
-    # Configurar dispositivos
-    with st.expander("⚙️ Configurar Dispositivo MikroTik"):
-        device_name = st.selectbox("Nome do Dispositivo", ["Casa", "Escritório", "Filial", "Outro"])
+    # Tab 4 - Dispositivos MikroTik
+    with tab4:
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>router</span>Dispositivos MikroTik", unsafe_allow_html=True)
         
-        if device_name == "Outro":
-            device_name = st.text_input("Nome Personalizado")
+        # Configurar dispositivos
+        with st.expander("Configurar Dispositivo MikroTik"):
+            device_name = st.selectbox("Nome do Dispositivo", ["Casa", "Escritório", "Filial", "Outro"])
+            
+            if device_name == "Outro":
+                device_name = st.text_input("Nome Personalizado")
         
         col1, col2 = st.columns(2)
         with col1:
