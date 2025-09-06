@@ -1,0 +1,6 @@
+{
+  "service_name": "openvpn@client",
+  "interface": "tun0",
+  "auto_start": true,
+  "monitor_interval": 30
+}

@@ -1,0 +1,23 @@
+{
+  "routes": [
+    {
+      "network": "192.168.1.0/24",
+      "gateway": "10.0.10.7",
+      "description": "Rede casa exemplo",
+      "enabled": true,
+      "created": "2025-09-06T09:24:37.432417",
+      "last_sync": null
+    },
+    {
+      "network": "192.168.2.0/24",
+      "gateway": "10.0.10.7",
+      "description": "Rede escritório exemplo",
+      "enabled": true,
+      "created": "2025-09-06T09:24:37.432432",
+      "last_sync": null
+    }
+  ],
+  "gateway_ip": "10.0.10.7",
+  "interface": "tun0",
+  "last_update": "2025-09-06T09:24:37.432436"
+}

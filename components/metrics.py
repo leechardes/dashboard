@@ -2,8 +2,12 @@ import streamlit as st
 import psutil
 import datetime
 
-def create_metric_card(title, value, icon="analytics"):
-    """Create a styled metric card"""
+def create_metric_card(title, value, icon="analytics", icon_color=None):
+    """Create a styled metric card with optional icon color"""
+    # Se não especificar cor, usar a cor primária padrão
+    if icon_color is None:
+        icon_color = "var(--primary-color)"
+    
     st.markdown(f"""
     <div class="metric-card">
         <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -11,7 +15,7 @@ def create_metric_card(title, value, icon="analytics"):
                 <div style="font-size: 0.8rem; color: var(--text-color-secondary); margin-bottom: 0.2rem;">{title}</div>
                 <div style="font-size: 1.5rem; font-weight: 600; color: var(--text-color);">{value}</div>
             </div>
-            <div class="material-icons" style="font-size: 2rem; color: var(--primary-color);">{icon}</div>
+            <div class="material-icons" style="font-size: 2rem; color: {icon_color};">{icon}</div>
         </div>
     </div>
     """, unsafe_allow_html=True)

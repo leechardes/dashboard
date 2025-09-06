@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Import views
-from views import dashboard, documentation_antd, logs, repositories, system, settings, claude_manager, service_management, code_server
+from views import dashboard, documentation_antd, logs, repositories, system, settings, claude_manager, service_management, code_server, openvpn_client
 
 # Configure Streamlit page
 st.set_page_config(
@@ -97,6 +97,7 @@ def main():
         st.Page(repositories.run, title="Repositórios", icon=":material/folder:", url_path="repos"),
         st.Page(system.run, title="Sistema", icon=":material/desktop_windows:", url_path="system"),
         st.Page(code_server.run, title="Code Server", icon=":material/code:", url_path="code-server"),
+        st.Page(openvpn_client.run, title="OpenVPN Gateway", icon=":material/vpn_lock:", url_path="vpn-gateway"),
         st.Page(claude_manager.run, title="Gerenciador Claude", icon=":material/computer:", url_path="claude-manager"),
         st.Page(service_management.run, title="Controle de Serviços", icon=":material/handyman:", url_path="service-control"),
         st.Page(logs.run, title="Logs", icon=":material/assignment:", url_path="logs"),
