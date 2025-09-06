@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Import views
-from views import dashboard, documentation_antd, logs, repositories, system, settings, claude_manager, service_management, code_server, openvpn_client
+from views import dashboard, documentation_antd, logs, repositories, system, settings, claude_manager, service_management, code_server, openvpn_client, vpn_nat_manager
 
 # Configure Streamlit page
 st.set_page_config(
@@ -90,19 +90,31 @@ def main():
         st.markdown('<div class="nav-header"><span class="material-icons">rocket_launch</span> Dev Dashboard</div>', unsafe_allow_html=True)
         st.markdown("---")
     
-    # Create navigation using st.navigation  
-    pages = [
-        st.Page(dashboard.run, title="Painel", icon=":material/analytics:", url_path="dashboard"),
-        st.Page(documentation_antd.run, title="Documentação", icon=":material/menu_book:", url_path="docs"),
-        st.Page(repositories.run, title="Repositórios", icon=":material/folder:", url_path="repos"),
-        st.Page(system.run, title="Sistema", icon=":material/desktop_windows:", url_path="system"),
-        st.Page(code_server.run, title="Code Server", icon=":material/code:", url_path="code-server"),
-        st.Page(openvpn_client.run, title="OpenVPN Gateway", icon=":material/vpn_lock:", url_path="vpn-gateway"),
-        st.Page(claude_manager.run, title="Gerenciador Claude", icon=":material/computer:", url_path="claude-manager"),
-        st.Page(service_management.run, title="Controle de Serviços", icon=":material/handyman:", url_path="service-control"),
-        st.Page(logs.run, title="Logs", icon=":material/assignment:", url_path="logs"),
-        st.Page(settings.run, title="Configurações", icon=":material/settings:", url_path="settings")
-    ]
+    # Create navigation using st.navigation with groups
+    pages = {
+        "Principal": [
+            st.Page(dashboard.run, title="Painel", icon=":material/analytics:", url_path="dashboard"),
+            st.Page(documentation_antd.run, title="Documentação", icon=":material/menu_book:", url_path="docs"),
+        ],
+        
+        "Desenvolvimento": [
+            st.Page(repositories.run, title="Repositórios", icon=":material/folder:", url_path="repos"),
+            st.Page(code_server.run, title="Code Server", icon=":material/code:", url_path="code-server"),
+            st.Page(claude_manager.run, title="Gerenciador Claude", icon=":material/computer:", url_path="claude-manager"),
+        ],
+        
+        "Rede & VPN": [
+            st.Page(openvpn_client.run, title="OpenVPN Gateway", icon=":material/vpn_lock:", url_path="vpn-gateway"),
+            st.Page(vpn_nat_manager.run, title="VPN & NAT Manager", icon=":material/security:", url_path="vpn-nat-manager"),
+        ],
+        
+        "Sistema": [
+            st.Page(system.run, title="Sistema", icon=":material/desktop_windows:", url_path="system"),
+            st.Page(service_management.run, title="Controle de Serviços", icon=":material/handyman:", url_path="service-control"),
+            st.Page(logs.run, title="Logs", icon=":material/assignment:", url_path="logs"),
+            st.Page(settings.run, title="Configurações", icon=":material/settings:", url_path="settings"),
+        ]
+    }
     
     # Navigation
     nav = st.navigation(pages)
