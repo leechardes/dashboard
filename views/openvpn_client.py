@@ -94,12 +94,13 @@ def run():
     # Criar abas para organizar a interface
     st.markdown("---")
     
-    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
         "Controle",
         "Configuração", 
         "Rotas",
         "MikroTik",
-        "Monitoramento"
+        "Monitoramento",
+        "Teste de Ping"
     ])
     
     # Tab 1 - Controle do Serviço
@@ -540,14 +541,14 @@ def run():
                 st.text(f"{key.replace('_', ' ').title()}: {value}")
         
         with col2:
-            st.markdown("**📈 Estatísticas de Rotas:**")
+            st.markdown("**Estatísticas de Rotas:**")
             route_stats = routes.get_statistics()
             for key, value in route_stats.items():
                 if key != 'config_file':  # Não mostrar caminho do arquivo
                     st.text(f"{key.replace('_', ' ').title()}: {value}")
     
     # Logs do sistema
-    with st.expander("📋 Ver Logs do OpenVPN"):
+    with st.expander("Ver Logs do OpenVPN"):
         log_lines = st.selectbox("Número de linhas", [20, 50, 100, 200], index=1)
         
         if st.button(":material/refresh: Carregar Logs"):
@@ -558,12 +559,195 @@ def run():
                 except Exception as e:
                     st.error(f"Erro ao carregar logs: {e}")
     
+    # Tab 5 - Monitoramento
+    with tab5:
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>monitoring</span>Monitoramento", unsafe_allow_html=True)
+        
+        # Estatísticas em tempo real
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("#### Estatísticas da Interface")
+            stats = vpn_manager.get_statistics()
+            for key, value in stats.items():
+                st.text(f"{key}: {value}")
+        
+        with col2:
+            st.markdown("#### Informações da Conexão")
+            conn_info = vpn_manager.get_connection_info()
+            for key, value in conn_info.items():
+                st.text(f"{key}: {value}")
+        
+        # Logs
+        with st.expander("Ver Logs do Sistema"):
+            log_lines = st.slider("Linhas de log", 10, 200, 50)
+            if st.button(":material/refresh: Atualizar Logs", key="refresh_logs_monitoring"):
+                logs = vpn_manager.get_logs(log_lines)
+                st.code(logs, language="bash")
+    
+    # Tab 6 - Teste de Ping
+    with tab6:
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>network_check</span>Teste de Conectividade", unsafe_allow_html=True)
+        
+        # Teste rápido de conectividade
+        col1, col2 = st.columns([3, 1])
+        
+        with col1:
+            # Campo para digitar IP ou hostname
+            target_host = st.text_input(
+                "Endereço para teste (IP ou hostname)",
+                placeholder="Ex: 8.8.8.8 ou google.com",
+                help="Digite um endereço IP ou hostname para testar conectividade"
+            )
+        
+        with col2:
+            # Número de pacotes
+            packet_count = st.number_input(
+                "Pacotes",
+                min_value=1,
+                max_value=20,
+                value=4,
+                help="Número de pacotes ICMP a enviar"
+            )
+        
+        # Hosts predefinidos para teste rápido
+        st.markdown("#### Testes Rápidos")
+        
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            if st.button(":material/public: Google DNS", use_container_width=True):
+                target_host = "8.8.8.8"
+                st.session_state['ping_target'] = target_host
+        
+        with col2:
+            if st.button(":material/dns: Cloudflare", use_container_width=True):
+                target_host = "1.1.1.1"
+                st.session_state['ping_target'] = target_host
+        
+        with col3:
+            if st.button(":material/router: Gateway VPN", use_container_width=True):
+                # Obter gateway da VPN
+                gateway = subprocess.run(
+                    ['ip', 'route', 'show', 'dev', 'tun0'],
+                    capture_output=True, text=True
+                ).stdout.split()[2] if vpn_manager.get_status() == "connected" else "10.8.0.1"
+                target_host = gateway
+                st.session_state['ping_target'] = target_host
+        
+        with col4:
+            if st.button(":material/home: Gateway Local", use_container_width=True):
+                # Obter gateway padrão
+                gateway = subprocess.run(
+                    ['ip', 'route', 'show', 'default'],
+                    capture_output=True, text=True
+                ).stdout.split()[2] if subprocess.run(['ip', 'route', 'show', 'default'], capture_output=True).returncode == 0 else "192.168.1.1"
+                target_host = gateway
+                st.session_state['ping_target'] = target_host
+        
+        # Usar target do session_state se existir
+        if 'ping_target' in st.session_state:
+            target_host = st.session_state['ping_target']
+        
+        # Botão de executar ping
+        if st.button(":material/send: Executar Teste", type="primary", use_container_width=True):
+            if target_host:
+                with st.spinner(f"Testando conectividade com {target_host}..."):
+                    try:
+                        # Executar ping
+                        result = subprocess.run(
+                            ['ping', '-c', str(packet_count), '-W', '2', target_host],
+                            capture_output=True,
+                            text=True,
+                            timeout=packet_count * 3 + 2
+                        )
+                        
+                        # Processar resultado
+                        if result.returncode == 0:
+                            st.success(f"Conectividade OK com {target_host}")
+                            
+                            # Extrair estatísticas do ping
+                            output_lines = result.stdout.split('\n')
+                            
+                            # Mostrar resultado completo
+                            with st.expander("Detalhes do Ping", expanded=True):
+                                st.code(result.stdout, language="bash")
+                            
+                            # Extrair e mostrar estatísticas
+                            for line in output_lines:
+                                if 'packet loss' in line:
+                                    st.info(f"Estatística: {line}")
+                                if 'rtt min/avg/max' in line or 'round-trip' in line:
+                                    st.info(f"Latência: {line}")
+                        else:
+                            st.error(f"Falha na conectividade com {target_host}")
+                            if result.stdout:
+                                with st.expander("Detalhes do erro"):
+                                    st.code(result.stdout, language="bash")
+                            
+                    except subprocess.TimeoutExpired:
+                        st.error(f"Timeout ao tentar alcançar {target_host}")
+                    except Exception as e:
+                        st.error(f"Erro ao executar ping: {str(e)}")
+            else:
+                st.warning("Por favor, digite um endereço para testar")
+        
+        # Teste de conectividade através da VPN
+        st.markdown("---")
+        st.markdown("#### Teste de Rota pela VPN")
+        
+        if st.button(":material/route: Testar Rota Completa", use_container_width=True):
+            if vpn_manager.get_status() == "connected":
+                with st.spinner("Testando rota através da VPN..."):
+                    # Testar conectividade local
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        st.markdown("**Interface VPN (tun0):**")
+                        vpn_ip = vpn_manager.get_vpn_ip()
+                        if vpn_ip:
+                            st.success(f"IP: {vpn_ip}")
+                        else:
+                            st.error("Interface não encontrada")
+                    
+                    with col2:
+                        st.markdown("**IP Público via VPN:**")
+                        try:
+                            public_ip = subprocess.run(
+                                ['curl', '-s', '--max-time', '5', 'ifconfig.me'],
+                                capture_output=True, text=True
+                            ).stdout.strip()
+                            if public_ip:
+                                st.success(f"IP: {public_ip}")
+                            else:
+                                st.warning("Não foi possível obter IP público")
+                        except:
+                            st.error("Erro ao verificar IP público")
+                    
+                    # Traceroute simplificado
+                    if target_host:
+                        with st.expander("Traçar Rota"):
+                            try:
+                                trace_result = subprocess.run(
+                                    ['traceroute', '-n', '-m', '10', '-w', '2', target_host],
+                                    capture_output=True,
+                                    text=True,
+                                    timeout=30
+                                )
+                                st.code(trace_result.stdout, language="bash")
+                            except subprocess.TimeoutExpired:
+                                st.warning("Traceroute timeout")
+                            except FileNotFoundError:
+                                st.info("Traceroute não instalado. Use: sudo apt install traceroute")
+            else:
+                st.warning("VPN não está conectada")
+    
     # Auto-refresh
     st.sidebar.markdown("---")
-    auto_refresh = st.sidebar.checkbox("🔄 Auto-atualização (30s)", value=False)
+    auto_refresh = st.sidebar.checkbox("Auto-atualização (30s)", value=False)
     
     if auto_refresh:
-        st.sidebar.markdown("⏱️ Próxima atualização em 30s")
+        st.sidebar.markdown("Próxima atualização em 30s")
         time.sleep(30)
         st.rerun()
     
@@ -571,10 +755,10 @@ def run():
     st.sidebar.markdown("---")
     current_status = vpn_manager.get_status()
     if current_status == "connected":
-        st.sidebar.success("✅ VPN Gateway Online")
+        st.sidebar.success("VPN Gateway Online")
     elif current_status in ["connecting", "starting"]:
-        st.sidebar.warning("🔄 VPN Gateway Iniciando")
+        st.sidebar.warning("VPN Gateway Iniciando")
     else:
-        st.sidebar.error("❌ VPN Gateway Offline")
+        st.sidebar.error("VPN Gateway Offline")
     
     st.sidebar.caption(f"Última atualização: {datetime.now().strftime('%H:%M:%S')}")
