@@ -112,7 +112,6 @@ def run():
                         auth_content = f"{vpn_username}\n{vpn_password}\n"
                         
                         # Salvar usando subprocess com sudo
-                        import subprocess
                         process = subprocess.Popen(
                             ['sudo', 'tee', str(auth_file)],
                             stdin=subprocess.PIPE,
