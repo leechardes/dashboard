@@ -181,7 +181,7 @@ def run():
         with col1:
             autostart = vpn_manager.is_autostart_enabled()
             if autostart:
-                st.markdown("<div style='color: green; background-color: #d4edda; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #c3e6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>Auto-início está ATIVO</div>", unsafe_allow_html=True)
+                st.success("✓ Auto-início está ATIVO")
                 if st.button(":material/power_settings_new: Desabilitar Auto-Início", use_container_width=True):
                     if vpn_manager.disable_autostart():
                         st.success("Auto-início desabilitado")
@@ -431,7 +431,7 @@ def run():
                     
                     # Status visual
                     if is_online:
-                        st.markdown(f"<div style='color: green; background-color: #d4edda; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #c3e6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>check_circle</span><strong>{name}</strong></div>", unsafe_allow_html=True)
+                        st.success(f"✓ {name} - {status_msg}")
                         st.markdown(f"<span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>place</span>{config['ip']}:{config['port']}", unsafe_allow_html=True)
                         st.caption(f"Status: {status_msg}")
                         
@@ -440,19 +440,19 @@ def run():
                             with st.spinner(f"Sincronizando {name}..."):
                                 sync_success, sync_msg = mikrotik.sync_device(name, routes.get_active_routes())
                                 if sync_success:
-                                    st.markdown(f"<div style='color: green; background-color: #d4edda; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #c3e6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>{sync_msg}</div>", unsafe_allow_html=True)
+                                    st.success(sync_msg)
                                 else:
-                                    st.markdown(f"<div style='color: #721c24; background-color: #f8d7da; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #f5c6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>cancel</span>{sync_msg}</div>", unsafe_allow_html=True)
+                                    st.error(sync_msg)
                         
                         if st.button(f":material/backup: Backup", key=f"backup_{name}"):
                             with st.spinner(f"Criando backup de {name}..."):
                                 backup_success, backup_msg = mikrotik.backup_config(name)
                                 if backup_success:
-                                    st.markdown(f"<div style='color: green; background-color: #d4edda; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #c3e6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>{backup_msg}</div>", unsafe_allow_html=True)
+                                    st.success(backup_msg)
                                 else:
-                                    st.markdown(f"<div style='color: #721c24; background-color: #f8d7da; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #f5c6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>cancel</span>{backup_msg}</div>", unsafe_allow_html=True)
+                                    st.error(backup_msg)
                     else:
-                        st.markdown(f"<div style='color: #721c24; background-color: #f8d7da; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #f5c6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>cancel</span><strong>{name}</strong></div>", unsafe_allow_html=True)
+                        st.error(f"✗ {name} - {status_msg}")
                         st.markdown(f"<span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>place</span>{config['ip']}:{config['port']}", unsafe_allow_html=True)
                         st.caption(f"Erro: {status_msg}")
                     

@@ -61,15 +61,15 @@ def render_vpn_users_tab():
                     )
                 
                 if result["success"]:
-                    st.success(f"<span class='material-icons' style='color: green; vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>Usuário '{result['data']['username']}' criado com sucesso!")
+                    st.success(f"✓ Usuário '{result['data']['username']}' criado com sucesso!")
                     st.info(f"**IP:** {result['data']['ip_address']}")
                     if generate_password:
                         st.info(f"**Senha:** `{result['data']['password']}`")
                     st.rerun()
                 else:
-                    st.error(f"<span class='material-icons' style='color: red; vertical-align: middle; margin-right: 0.5rem;'>cancel</span>Erro: {result['message']}")
+                    st.error(f"✗ Erro: {result['message']}")
             else:
-                st.error("<span class='material-icons' style='color: red; vertical-align: middle; margin-right: 0.5rem;'>cancel</span>Nome do usuário é obrigatório")
+                st.error("✗ Nome do usuário é obrigatório")
     
     # Lista de Usuários
     st.markdown("#### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>people</span>Usuários Configurados", unsafe_allow_html=True)
@@ -147,7 +147,7 @@ def render_vpn_users_tab():
             
             # Confirmação de exclusão
             if st.session_state.get(f"confirm_delete_user_{username}", False):
-                st.warning(f"<span class='material-icons' style='color: orange; vertical-align: middle; margin-right: 0.5rem;'>warning</span>Confirma exclusão do usuário **{username}**?")
+                st.warning(f"⚠ Confirma exclusão do usuário **{username}**?")
                 col_yes, col_no = st.columns(2)
                 with col_yes:
                     if st.button("Confirmar", key=f"confirm_del_{i}", type="secondary"):
@@ -209,9 +209,9 @@ def render_port_forwarding_tab():
         if external_port:
             port_check = st.session_state.nat_manager.check_port_available(external_port, protocol)
             if port_check["available"]:
-                st.success(f"<span class='material-icons' style='color: green; vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>Porta {external_port}/{protocol} está disponível")
+                st.success(f"✓ Porta {external_port}/{protocol} está disponível")
             else:
-                st.error(f"<span class='material-icons' style='color: red; vertical-align: middle; margin-right: 0.5rem;'>cancel</span>{port_check['reason']}")
+                st.error(f"✗ {port_check['reason']}")
                 if "used_by" in port_check:
                     st.info(f"Usada por: {port_check['used_by']}")
         
@@ -227,7 +227,7 @@ def render_port_forwarding_tab():
                     )
                 
                 if result["success"]:
-                    st.success("<span class='material-icons' style='color: green; vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>Regra de port forwarding criada com sucesso!")
+                    st.success("✓ Regra de port forwarding criada com sucesso!")
                     
                     # Mostrar informações da regra criada
                     data = result["data"]
@@ -236,15 +236,15 @@ def render_port_forwarding_tab():
                     # Status da porta interna
                     port_test = data.get("port_test", {})
                     if port_test.get("reachable"):
-                        st.success(f"<span class='material-icons' style='color: green; vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>Porta interna {data['internal_ip']}:{data['internal_port']} está ativa")
+                        st.success(f"✓ Porta interna {data['internal_ip']}:{data['internal_port']} está ativa")
                     else:
-                        st.warning(f"<span class='material-icons' style='color: orange; vertical-align: middle; margin-right: 0.5rem;'>warning</span>Porta interna pode não estar ativa: {port_test.get('reason', 'N/A')}")
+                        st.warning(f"⚠ Porta interna pode não estar ativa: {port_test.get('reason', 'N/A')}")
                     
                     st.rerun()
                 else:
-                    st.error(f"<span class='material-icons' style='color: red; vertical-align: middle; margin-right: 0.5rem;'>cancel</span>Erro: {result['message']}")
+                    st.error(f"✗ Erro: {result['message']}")
             else:
-                st.error("<span class='material-icons' style='color: red; vertical-align: middle; margin-right: 0.5rem;'>cancel</span>Todos os campos são obrigatórios")
+                st.error("✗ Todos os campos são obrigatórios")
     
     # Lista de Regras
     st.markdown("#### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>list</span>Regras Configuradas", unsafe_allow_html=True)
@@ -311,9 +311,9 @@ def render_port_forwarding_tab():
                     if ip and port:
                         result = st.session_state.nat_manager.test_port(ip, int(port), protocol)
                         if result["reachable"]:
-                            st.success(f"<span class='material-icons' style='color: green; vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>{ip}:{port} está alcançável")
+                            st.success(f"✓ {ip}:{port} está alcançável")
                         else:
-                            st.error(f"<span class='material-icons' style='color: red; vertical-align: middle; margin-right: 0.5rem;'>cancel</span>{result['reason']}")
+                            st.error(f"✗ {result['reason']}")
             
             with col4:
                 if st.button(":material/info: Detalhes", key=f"details_{i}"):
@@ -325,7 +325,7 @@ def render_port_forwarding_tab():
             
             # Confirmação de exclusão
             if st.session_state.get(f"confirm_delete_rule_{rule_id}", False):
-                st.warning(f"<span class='material-icons' style='color: orange; vertical-align: middle; margin-right: 0.5rem;'>warning</span>Confirma exclusão da regra **{external_port} → {internal_target}**?")
+                st.warning(f"⚠ Confirma exclusão da regra **{external_port} → {internal_target}**?")
                 col_yes, col_no = st.columns(2)
                 with col_yes:
                     if st.button("Confirmar", key=f"confirm_rule_{i}", type="secondary"):
@@ -420,7 +420,7 @@ def render_quick_services_tab():
                 )
             
             if result["success"]:
-                st.success(f"<span class='material-icons' style='color: green; vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>{service_info['name']} configurado com sucesso!")
+                st.success(f"✓ {service_info['name']} configurado com sucesso!")
                 
                 data = result["data"]
                 st.info(f"**Acesso externo:** {data['external_port']}/{data['protocol'].upper()}")
@@ -429,14 +429,14 @@ def render_quick_services_tab():
                 # Status da conectividade
                 port_test = data.get("port_test", {})
                 if port_test.get("reachable"):
-                    st.success(f"<span class='material-icons' style='color: green; vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>Serviço está ativo em {data['internal_ip']}:{data['internal_port']}")
+                    st.success(f"✓ Serviço está ativo em {data['internal_ip']}:{data['internal_port']}")
                 else:
-                    st.warning(f"<span class='material-icons' style='color: orange; vertical-align: middle; margin-right: 0.5rem;'>warning</span>Serviço pode não estar ativo: {port_test.get('reason', 'N/A')}")
+                    st.warning(f"⚠ Serviço pode não estar ativo: {port_test.get('reason', 'N/A')}")
                     
             else:
                 st.error(f"<span class='material-icons' style='color: red; vertical-align: middle; margin-right: 0.5rem;'>cancel</span>Erro: {result['message']}")
         else:
-            st.error("<span class='material-icons' style='color: red; vertical-align: middle; margin-right: 0.5rem;'>cancel</span>Selecione um servidor")
+            st.error("✗ Selecione um servidor")
     
     # Seção de Serviços Populares
     st.markdown("#### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>star</span>Serviços Populares", unsafe_allow_html=True)
@@ -486,11 +486,11 @@ def render_quick_services_tab():
                 )
                 
                 if result["success"]:
-                    st.success(f"<span class='material-icons' style='color: green; vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>{selected_service['name']} configurado!")
+                    st.success(f"✓ {selected_service['name']} configurado!")
                     del st.session_state["selected_quick_service"]
                     st.rerun()
                 else:
-                    st.error(f"<span class='material-icons' style='color: red; vertical-align: middle; margin-right: 0.5rem;'>cancel</span>{result['message']}")
+                    st.error(f"✗ {result['message']}")
 
 def render_monitoring_tab():
     """Renderiza tab de Monitoramento"""
@@ -508,17 +508,17 @@ def render_monitoring_tab():
                 nat_test = st.session_state.nat_manager.test_connection()
             
             if vpn_test["success"] and nat_test["success"]:
-                st.success("<span class='material-icons' style='color: green; vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>Conexão estabelecida com sucesso")
+                st.success("✓ Conexão estabelecida com sucesso")
                 if vpn_test.get("identity"):
                     st.info(f"Identidade: {vpn_test['identity']}")
             else:
-                st.error("<span class='material-icons' style='color: red; vertical-align: middle; margin-right: 0.5rem;'>cancel</span>Erro de conexão")
+                st.error("✗ Erro de conexão")
                 st.error(vpn_test["message"])
     
     with col2:
         st.markdown("#### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>schedule</span>Última Atualização", unsafe_allow_html=True)
         last_refresh = st.session_state.get('last_refresh', datetime.now())
-        st.info(f"<span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>schedule</span>{last_refresh.strftime('%H:%M:%S')}")
+        st.info(f"Última atualização: {last_refresh.strftime('%H:%M:%S')}")
         
         if st.button(":material/refresh: Atualizar Dados"):
             st.session_state.last_refresh = datetime.now()
@@ -639,7 +639,7 @@ def render_monitoring_tab():
             active_hosts = st.session_state.nat_manager.scan_local_network()
         
         if active_hosts:
-            st.success(f"<span class='material-icons' style='color: green; vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>{len(active_hosts)} hosts ativos encontrados")
+            st.success(f"✓ {len(active_hosts)} hosts ativos encontrados")
             
             host_data = []
             for host in active_hosts:
@@ -687,74 +687,19 @@ def render_monitoring_tab():
             if recommendations:
                 st.markdown("##### Recomendações")
                 for rec in recommendations:
-                    st.warning(f"<span class='material-icons' style='color: orange; vertical-align: middle; margin-right: 0.5rem;'>warning</span>{rec}")
+                    st.warning(f"⚠ {rec}")
 
 def run():
     """Função principal da aplicação"""
-    # Carregar CSS adaptativo
-    try:
-        with open('/srv/projects/shared/dashboard/static/adaptive_theme.css', 'r') as css_file:
-            st.markdown(f"<style>{css_file.read()}</style>", unsafe_allow_html=True)
-    except FileNotFoundError:
-        # Fallback CSS se o arquivo não existir
-        st.markdown("""
-        <style>
-        @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
-        
-        :root {
-            --bg-primary: var(--background-color);
-            --text-primary: var(--text-color);
-            --bg-secondary: var(--secondary-background-color);
-            --text-secondary: var(--text-color-secondary);
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --error-color: #ef4444;
-            --info-color: #3b82f6;
-            --border-color: rgba(128, 128, 128, 0.2);
-        }
-        
-        .main-header {
-            padding: 1.5rem;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid var(--info-color);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        
-        .material-icons,
-        .material-symbols-outlined {
-            font-family: 'Material Symbols Outlined';
-            font-weight: normal;
-            font-style: normal;
-            font-size: 24px;
-            line-height: 1;
-            letter-spacing: normal;
-            text-transform: none;
-            display: inline-block;
-            white-space: nowrap;
-            word-wrap: normal;
-            direction: ltr;
-            vertical-align: middle;
-        }
-        
-        .metric-card {
-            background: var(--bg-secondary);
-            padding: 1.5rem;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            margin: 0.5rem 0;
-        }
-        </style>
-        """, unsafe_allow_html=True)
     
-    # Header principal
-    st.markdown('<div class="main-header"><span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem;">security</span>Gerenciador VPN e NAT</div>', unsafe_allow_html=True)
+    # Header principal com Material Icon
+    st.markdown(
+        '<div class="main-header">'
+        '<span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem;">security</span>'
+        'VPN & NAT Manager'
+        '</div>', 
+        unsafe_allow_html=True
+    )
     
     # Inicializar session state
     init_session_state()
