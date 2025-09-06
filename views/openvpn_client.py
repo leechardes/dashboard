@@ -141,11 +141,11 @@ def run():
             if st.button(":material/restart_alt: Reiniciar VPN", use_container_width=True, key="restart_vpn_tab"):
                 with st.spinner("Reiniciando VPN..."):
                     if vpn_manager.restart():
-                        st.success("✅ VPN reiniciada")
+                        st.markdown("<div style='color: green; background-color: #d4edda; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #c3e6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>VPN reiniciada</div>", unsafe_allow_html=True)
                         time.sleep(2)
                         st.rerun()
                     else:
-                        st.error("❌ Erro ao reiniciar VPN")
+                        st.markdown("<div style='color: #721c24; background-color: #f8d7da; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #f5c6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>cancel</span>Erro ao reiniciar VPN</div>", unsafe_allow_html=True)
         
         with col4:
             if st.button(":material/description: Ver Logs", use_container_width=True, key="view_logs_tab"):
@@ -181,13 +181,13 @@ def run():
         with col1:
             autostart = vpn_manager.is_autostart_enabled()
             if autostart:
-                st.success("✅ Auto-início está ATIVO")
+                st.markdown("<div style='color: green; background-color: #d4edda; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #c3e6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>Auto-início está ATIVO</div>", unsafe_allow_html=True)
                 if st.button(":material/power_settings_new: Desabilitar Auto-Início", use_container_width=True):
                     if vpn_manager.disable_autostart():
                         st.success("Auto-início desabilitado")
                         st.rerun()
             else:
-                st.warning("⚠️ Auto-início está INATIVO")
+                st.markdown("<div style='color: #856404; background-color: #fff3cd; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #ffeaa7;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>warning</span>Auto-início está INATIVO</div>", unsafe_allow_html=True)
                 if st.button(":material/power_settings_new: Habilitar Auto-Início", use_container_width=True):
                     if vpn_manager.enable_autostart():
                         st.success("Auto-início habilitado")
@@ -229,7 +229,7 @@ def run():
                             # Definir permissões seguras
                             subprocess.run(['sudo', 'chmod', '600', str(auth_file)], check=True)
                             subprocess.run(['sudo', 'chown', 'root:root', str(auth_file)], check=True)
-                            st.success("✅ Credenciais salvas com sucesso!")
+                            st.markdown("<div style='color: green; background-color: #d4edda; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #c3e6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>Credenciais salvas com sucesso!</div>", unsafe_allow_html=True)
                             
                             # Atualizar configuração para usar o arquivo de auth
                             vpn_manager.update_auth_config(str(auth_file))
@@ -280,7 +280,7 @@ def run():
                         
                         if process.returncode == 0:
                             subprocess.run(['sudo', 'chmod', '644', str(config_path)], check=True)
-                            st.success(f"✅ Configuração '{uploaded_file.name}' aplicada com sucesso!")
+                            st.markdown(f"<div style='color: green; background-color: #d4edda; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #c3e6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>Configuração '{uploaded_file.name}' aplicada com sucesso!</div>", unsafe_allow_html=True)
                             st.info("Reinicie o serviço VPN para aplicar as mudanças")
                         else:
                             st.error(f"Erro ao salvar configuração: {stderr}")
@@ -293,7 +293,7 @@ def run():
         st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>route</span>Gerenciamento de Rotas", unsafe_allow_html=True)
         
         # Adicionar nova rota
-        with st.expander("➕ Adicionar Nova Rota"):
+        with st.expander("Adicionar Nova Rota", expanded=False):
             col1, col2 = st.columns([2, 1])
             with col1:
                 new_network = st.text_input(
@@ -410,7 +410,7 @@ def run():
         if st.button(":material/save: Salvar Configuração"):
             if device_name and ip and user and password:
                 if mikrotik.save_device(device_name, ip, port, user, password, description):
-                    st.success(f"✅ Configuração de '{device_name}' salva")
+                    st.markdown(f"<div style='color: green; background-color: #d4edda; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #c3e6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>Configuração de '{device_name}' salva</div>", unsafe_allow_html=True)
                     st.rerun()
                 else:
                     st.error("Erro ao salvar configuração")
@@ -420,7 +420,7 @@ def run():
     # Status dos dispositivos
     devices = mikrotik.get_devices()
     if devices:
-        st.markdown("### 🖥️ Status dos Dispositivos")
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>computer</span>Status dos Dispositivos", unsafe_allow_html=True)
         
         cols = st.columns(min(len(devices), 3))  # Máximo 3 colunas
         for idx, (name, config) in enumerate(devices.items()):
@@ -431,8 +431,8 @@ def run():
                     
                     # Status visual
                     if is_online:
-                        st.success(f"✅ **{name}**")
-                        st.text(f"📍 {config['ip']}:{config['port']}")
+                        st.markdown(f"<div style='color: green; background-color: #d4edda; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #c3e6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>check_circle</span><strong>{name}</strong></div>", unsafe_allow_html=True)
+                        st.markdown(f"<span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>place</span>{config['ip']}:{config['port']}", unsafe_allow_html=True)
                         st.caption(f"Status: {status_msg}")
                         
                         # Botões de ação
@@ -440,20 +440,20 @@ def run():
                             with st.spinner(f"Sincronizando {name}..."):
                                 sync_success, sync_msg = mikrotik.sync_device(name, routes.get_active_routes())
                                 if sync_success:
-                                    st.success(f"✅ {sync_msg}")
+                                    st.markdown(f"<div style='color: green; background-color: #d4edda; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #c3e6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>{sync_msg}</div>", unsafe_allow_html=True)
                                 else:
-                                    st.error(f"❌ {sync_msg}")
+                                    st.markdown(f"<div style='color: #721c24; background-color: #f8d7da; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #f5c6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>cancel</span>{sync_msg}</div>", unsafe_allow_html=True)
                         
                         if st.button(f":material/backup: Backup", key=f"backup_{name}"):
                             with st.spinner(f"Criando backup de {name}..."):
                                 backup_success, backup_msg = mikrotik.backup_config(name)
                                 if backup_success:
-                                    st.success(f"✅ {backup_msg}")
+                                    st.markdown(f"<div style='color: green; background-color: #d4edda; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #c3e6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>{backup_msg}</div>", unsafe_allow_html=True)
                                 else:
-                                    st.error(f"❌ {backup_msg}")
+                                    st.markdown(f"<div style='color: #721c24; background-color: #f8d7da; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #f5c6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>cancel</span>{backup_msg}</div>", unsafe_allow_html=True)
                     else:
-                        st.error(f"❌ **{name}**")
-                        st.text(f"📍 {config['ip']}:{config['port']}")
+                        st.markdown(f"<div style='color: #721c24; background-color: #f8d7da; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #f5c6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>cancel</span><strong>{name}</strong></div>", unsafe_allow_html=True)
+                        st.markdown(f"<span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>place</span>{config['ip']}:{config['port']}", unsafe_allow_html=True)
                         st.caption(f"Erro: {status_msg}")
                     
                     # Botão de remover
@@ -468,7 +468,7 @@ def run():
     
     # Sincronizar todos
     if devices:
-        st.markdown("### 🔄 Sincronização em Lote")
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>sync</span>Sincronização em Lote", unsafe_allow_html=True)
         col1, col2 = st.columns(2)
         
         with col1:
@@ -480,11 +480,11 @@ def run():
                         
                         for device, (success, message) in sync_results.items():
                             if success:
-                                st.success(f"✅ {device}: {message}")
+                                st.markdown(f"<div style='color: green; background-color: #d4edda; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #c3e6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>check_circle</span>{device}: {message}</div>", unsafe_allow_html=True)
                             else:
-                                st.error(f"❌ {device}: {message}")
+                                st.markdown(f"<div style='color: #721c24; background-color: #f8d7da; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #f5c6cb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>cancel</span>{device}: {message}</div>", unsafe_allow_html=True)
                 else:
-                    st.warning("⚠️ Nenhuma rota ativa para sincronizar")
+                    st.markdown("<div style='color: #856404; background-color: #fff3cd; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #ffeaa7;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>warning</span>Nenhuma rota ativa para sincronizar</div>", unsafe_allow_html=True)
         
         with col2:
             if st.button(":material/cloud_sync: Backup Todos os Dispositivos", use_container_width=True):
@@ -492,9 +492,9 @@ def run():
                     for name in devices.keys():
                         success, message = mikrotik.backup_config(name)
                         if success:
-                            st.info(f"📁 {name}: {message}")
+                            st.markdown(f"<div style='color: #0c5460; background-color: #d1ecf1; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #bee5eb;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>folder</span>{name}: {message}</div>", unsafe_allow_html=True)
                         else:
-                            st.warning(f"⚠️ {name}: {message}")
+                            st.markdown(f"<div style='color: #856404; background-color: #fff3cd; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #ffeaa7;'><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>warning</span>{name}: {message}</div>", unsafe_allow_html=True)
     
     # Monitoramento e estatísticas
     st.markdown("---")
@@ -507,12 +507,14 @@ def run():
         
         try:
             stats = vpn_manager.get_statistics()
-            st.info(f"""
-            **📡 Dados Transmitidos:** {stats['tx_bytes']}  
-            **📡 Dados Recebidos:** {stats['rx_bytes']}  
-            **📦 Pacotes Enviados:** {stats['tx_packets']}  
-            **📦 Pacotes Recebidos:** {stats['rx_packets']}  
-            """)
+            st.markdown(f"""
+            <div style="padding: 0.5rem; background-color: var(--secondary-background-color); border: 1px solid var(--border-color); border-radius: 0.25rem; color: var(--text-color);">
+            <strong><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>router</span>Dados Transmitidos:</strong> {stats['tx_bytes']}<br>
+            <strong><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>router</span>Dados Recebidos:</strong> {stats['rx_bytes']}<br>
+            <strong><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>inventory_2</span>Pacotes Enviados:</strong> {stats['tx_packets']}<br>
+            <strong><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>inventory_2</span>Pacotes Recebidos:</strong> {stats['rx_packets']}
+            </div>
+            """, unsafe_allow_html=True)
         except Exception as e:
             st.error(f"Erro ao obter estatísticas: {e}")
     
@@ -521,21 +523,23 @@ def run():
         
         try:
             speed = vpn_manager.get_speed()
-            st.info(f"""
-            **🌐 Latência:** {speed['latency']} ms  
-            **📊 Perda de Pacotes:** {speed['loss']}%  
-            **⚡ Download:** {speed['download']} Mbps  
-            **⚡ Upload:** {speed['upload']} Mbps  
-            """)
+            st.markdown(f"""
+            <div style="padding: 0.5rem; background-color: var(--secondary-background-color); border: 1px solid var(--border-color); border-radius: 0.25rem; color: var(--text-color);">
+            <strong><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>language</span>Latência:</strong> {speed['latency']} ms<br>
+            <strong><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>analytics</span>Perda de Pacotes:</strong> {speed['loss']}%<br>
+            <strong><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>bolt</span>Download:</strong> {speed['download']} Mbps<br>
+            <strong><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>bolt</span>Upload:</strong> {speed['upload']} Mbps
+            </div>
+            """, unsafe_allow_html=True)
         except Exception as e:
             st.error(f"Erro ao obter velocidade: {e}")
     
     # Informações detalhadas
-    with st.expander("📊 Informações Detalhadas do Sistema"):
+    with st.expander("Informações Detalhadas do Sistema"):
         col1, col2 = st.columns(2)
         
         with col1:
-            st.markdown("**🔧 Configurações VPN:**")
+            st.markdown("<strong><span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>build</span> Configurações VPN:</strong>", unsafe_allow_html=True)
             vpn_info = vpn_manager.get_connection_info()
             for key, value in vpn_info.items():
                 st.text(f"{key.replace('_', ' ').title()}: {value}")
