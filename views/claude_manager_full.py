@@ -19,6 +19,7 @@ from components.claude_monitor import claude_monitor
 from components.claude_actions import claude_actions
 from components.claude_config import claude_config
 from components.system_users import get_system_users, get_user_info
+from components.metrics import create_metric_card
 
 # Inicializar session state
 if 'auto_refresh' not in st.session_state:
@@ -77,12 +78,12 @@ def show_confirmation_dialog(title, message, key):
     return st.session_state.get(f"confirmed_{key}", False)
 
 # Header principal
-st.title("Claude Process Manager")
+st.markdown('<div class="main-header"><span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem; font-size: 2.5rem;">smart_toy</span>Gerenciador Claude</div>', unsafe_allow_html=True)
 st.markdown("Gerenciamento completo de processos Claude em execução no sistema")
 
 # Sidebar para controles globais
 with st.sidebar:
-    st.header("Controles")
+    st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>settings</span>Controles", unsafe_allow_html=True)
     
     # Auto-refresh
     st.session_state.auto_refresh = st.checkbox("Auto Refresh", st.session_state.auto_refresh)
@@ -124,31 +125,31 @@ system_resources = claude_monitor.get_system_resources()
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    st.metric(
-        "Total Processos",
-        memory_stats.get('total_processes', 0),
-        delta=None
+    create_metric_card(
+        "Total Processos", 
+        str(memory_stats.get('total_processes', 0)), 
+        "smart_toy"
     )
 
 with col2:
-    st.metric(
-        "Memória Total",
-        f"{memory_stats.get('total_memory_mb', 0):.1f} MB",
-        delta=None
+    create_metric_card(
+        "Memória Total", 
+        f"{memory_stats.get('total_memory_mb', 0):.1f} MB", 
+        "memory"
     )
 
 with col3:
-    st.metric(
-        "Usuários Ativos",
-        memory_stats.get('active_users', 0),
-        delta=None
+    create_metric_card(
+        "Usuários Ativos", 
+        str(memory_stats.get('active_users', 0)), 
+        "people"
     )
 
 with col4:
-    st.metric(
-        "CPU Sistema",
-        f"{system_resources.get('cpu_percent', 0):.1f}%",
-        delta=None
+    create_metric_card(
+        "CPU Sistema", 
+        f"{system_resources.get('cpu_percent', 0):.1f}%", 
+        "desktop_windows"
     )
 
 # Tabs principais
@@ -156,7 +157,7 @@ tab1, tab2, tab3, tab4 = st.tabs(["Monitor", "Analytics", "Config", "Logs"])
 
 # TAB 1: MONITOR
 with tab1:
-    st.header("Monitor de Processos")
+    st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>monitor</span>Monitor de Processos", unsafe_allow_html=True)
     
     if not processes:
         st.info("Nenhum processo Claude encontrado no sistema")
@@ -271,7 +272,7 @@ with tab1:
 
 # TAB 2: ANALYTICS
 with tab2:
-    st.header("Analytics & Estatísticas")
+    st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>analytics</span>Análise e Estatísticas", unsafe_allow_html=True)
     
     if not processes:
         st.info("Sem dados para análise - nenhum processo encontrado")
@@ -332,14 +333,14 @@ with tab2:
             stats_col1, stats_col2 = st.columns(2)
             
             with stats_col1:
-                st.metric("Processo com mais memória", f"{memory_stats.get('max_memory_mb', 0):.1f} MB")
-                st.metric("Memória média por processo", f"{memory_stats.get('avg_memory_mb', 0):.1f} MB")
+                create_metric_card("Processo com mais memória", f"{memory_stats.get('max_memory_mb', 0):.1f} MB", "trending_up")
+                create_metric_card("Memória média por processo", f"{memory_stats.get('avg_memory_mb', 0):.1f} MB", "analytics")
             
             with stats_col2:
                 old_processes = len([p for p in processes if p['is_old']])
                 orphan_processes = len([p for p in processes if p['is_orphan']])
-                st.metric("Processos antigos (>2h)", old_processes)
-                st.metric("Processos órfãos", orphan_processes)
+                create_metric_card("Processos antigos (>2h)", str(old_processes), "schedule")
+                create_metric_card("Processos órfãos", str(orphan_processes), "warning")
         
         # Gráfico de linha temporal (simulado)
         st.subheader("Uso de Recursos ao Longo do Tempo")
@@ -371,7 +372,7 @@ with tab2:
 
 # TAB 3: CONFIG
 with tab3:
-    st.header("Configurações")
+    st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>settings</span>Configurações", unsafe_allow_html=True)
     
     # Subtabs para diferentes tipos de configuração
     config_tab1, config_tab2, config_tab3 = st.tabs(["Usuários", "Global", "Segurança"])
@@ -746,7 +747,7 @@ with tab3:
 
 # TAB 4: LOGS
 with tab4:
-    st.header("Logs de Ações")
+    st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>description</span>Logs de Ações", unsafe_allow_html=True)
     
     col1, col2 = st.columns([3, 1])
     

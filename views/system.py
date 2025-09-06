@@ -5,6 +5,7 @@ import socket
 import datetime
 import os
 from utils.system_monitor import get_detailed_system_info, get_network_info, get_process_info
+from components.metrics import create_metric_card
 
 def run():
     """Detailed system information view"""
@@ -110,14 +111,14 @@ def run():
             col1, col2, col3 = st.columns(3)
             
             with col1:
-                st.metric("Total", f"{partition_usage.total / (1024**3):.1f} GB")
+                create_metric_card("Total", f"{partition_usage.total / (1024**3):.1f} GB", "storage")
             
             with col2:
-                st.metric("Livre", f"{partition_usage.free / (1024**3):.1f} GB")
+                create_metric_card("Livre", f"{partition_usage.free / (1024**3):.1f} GB", "folder")
             
             with col3:
                 used_percent = (partition_usage.used / partition_usage.total) * 100
-                st.metric("Usado", f"{used_percent:.1f}%")
+                create_metric_card("Usado", f"{used_percent:.1f}%", "pie_chart")
             
             # Progress bar for disk usage
             st.progress(used_percent/100)
@@ -202,9 +203,9 @@ def run():
         running_processes = len([p for p in psutil.process_iter() if p.status() == 'running'])
         sleeping_processes = len([p for p in psutil.process_iter() if p.status() == 'sleeping'])
         
-        st.metric("Total de Processos", total_processes)
-        st.metric("Em Execução", running_processes)
-        st.metric("Dormindo", sleeping_processes)
+        create_metric_card("Total de Processos", str(total_processes), "refresh")
+        create_metric_card("Em Execução", str(running_processes), "play_arrow")
+        create_metric_card("Dormindo", str(sleeping_processes), "bedtime")
     
     with process_col2:
         # Top processes by memory
@@ -235,13 +236,13 @@ def run():
         load_col1, load_col2, load_col3 = st.columns(3)
         
         with load_col1:
-            st.metric("1 minuto", f"{load_avg[0]:.2f}")
+            create_metric_card("1 minuto", f"{load_avg[0]:.2f}", "schedule")
         
         with load_col2:
-            st.metric("5 minutos", f"{load_avg[1]:.2f}")
+            create_metric_card("5 minutos", f"{load_avg[1]:.2f}", "timer")
         
         with load_col3:
-            st.metric("15 minutos", f"{load_avg[2]:.2f}")
+            create_metric_card("15 minutos", f"{load_avg[2]:.2f}", "alarm")
     
     except (AttributeError, OSError):
         # os.getloadavg() not available on Windows

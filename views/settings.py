@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 from datetime import datetime
+from components.metrics import create_metric_card
 
 def run():
     """Settings page for managing project paths configuration"""
@@ -46,7 +47,7 @@ def run():
         st.info("Configure quais diretórios contêm projetos a serem documentados")
         
         # Current paths
-        st.markdown("### Caminhos Atuais")
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>list</span>Caminhos Atuais", unsafe_allow_html=True)
         
         paths_modified = False
         updated_paths = []
@@ -70,7 +71,7 @@ def run():
                         new_color = st.color_picker("Cor", value=path_config.get("color", "#2196f3"), key=f"color_{idx}")
                 
                 with col2:
-                    st.markdown("### Ações")
+                    st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>settings</span>Ações", unsafe_allow_html=True)
                     if st.button(":material/delete: Remover", key=f"remove_{idx}"):
                         paths_modified = True
                         continue  # Skip this path
@@ -100,7 +101,7 @@ def run():
                 })
         
         # Add new path section
-        st.markdown("### Adicionar Novo Caminho")
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>add</span>Adicionar Novo Caminho", unsafe_allow_html=True)
         with st.form("add_path_form"):
             col1, col2 = st.columns([4, 1])
             
@@ -140,7 +141,7 @@ def run():
             config["paths"] = updated_paths
     
     with tab2:
-        st.subheader("Configurações Gerais")
+        st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>tune</span>Configurações Gerais", unsafe_allow_html=True)
         
         # Max depth setting
         new_max_depth = st.number_input(
@@ -159,7 +160,7 @@ def run():
         )
         
         # Exclude patterns
-        st.markdown("### Padrões de Exclusão")
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>block</span>Padrões de Exclusão", unsafe_allow_html=True)
         st.info("Diretórios que correspondem a estes padrões serão excluídos da busca")
         
         exclude_patterns = config["settings"].get("exclude_patterns", [])
@@ -176,25 +177,25 @@ def run():
         config["settings"]["exclude_patterns"] = [p.strip() for p in new_patterns.split("\n") if p.strip()]
     
     with tab3:
-        st.subheader("Estatísticas da Configuração")
+        st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>analytics</span>Estatísticas da Configuração", unsafe_allow_html=True)
         
         # Display statistics
         col1, col2, col3 = st.columns(3)
         
         with col1:
             total_paths = len(config["paths"])
-            st.metric("Total de Caminhos", total_paths)
+            create_metric_card("Total de Caminhos", total_paths, "folder")
         
         with col2:
             enabled_paths = sum(1 for p in config["paths"] if p["enabled"])
-            st.metric("Caminhos Habilitados", enabled_paths)
+            create_metric_card("Caminhos Habilitados", enabled_paths, "check_circle")
         
         with col3:
             auto_discover = sum(1 for p in config["paths"] if p["auto_discover"])
-            st.metric("Descoberta Automática", auto_discover)
+            create_metric_card("Descoberta Automática", auto_discover, "auto_awesome")
         
         # Path details table
-        st.markdown("### Detalhes dos Caminhos")
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>table_chart</span>Detalhes dos Caminhos", unsafe_allow_html=True)
         
         if config["paths"]:
             import pandas as pd
@@ -223,13 +224,13 @@ def run():
                 })
             
             df = pd.DataFrame(df_data)
-            st.dataframe(df, width=None, hide_index=True)
+            st.dataframe(df, use_container_width=True, hide_index=True)
         
         # Configuration info
-        st.markdown("### Arquivo de Configuração")
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>settings</span>Arquivo de Configuração", unsafe_allow_html=True)
         st.code(str(config_file), language="text")
         
-        st.markdown("### Última Atualização")
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>schedule</span>Última Atualização", unsafe_allow_html=True)
         st.text(config.get("last_updated", "Desconhecido"))
     
     # Save button (fixed at bottom)

@@ -4,6 +4,7 @@ import glob
 import datetime
 from utils.file_scanner import scan_log_files
 from components.markdown_viewer import render_log_content
+from components.metrics import create_metric_card
 
 @st.cache_data(ttl=60)  # Cache for 1 minute
 def get_log_files():
@@ -77,14 +78,14 @@ def run():
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.metric("Total Logs", len(logs))
+        create_metric_card("Total Logs", len(logs), "description")
     
     with col2:
-        st.metric("Filtrados", len(filtered_logs))
+        create_metric_card("Filtrados", len(filtered_logs), "filter_list")
     
     with col3:
         total_size = sum(log['size'] for log in filtered_logs) / (1024*1024)  # MB
-        st.metric("Tamanho Total", f"{total_size:.1f} MB")
+        create_metric_card("Tamanho Total", f"{total_size:.1f} MB", "storage")
     
     with col4:
         if st.button(":material/refresh: Atualizar"):
@@ -188,18 +189,18 @@ def run():
             
             with col1:
                 error_count = sum(1 for line in display_lines if "ERROR" in line.upper())
-                st.metric("Erros", error_count)
+                create_metric_card("Erros", error_count, "error")
             
             with col2:
                 warn_count = sum(1 for line in display_lines if "WARN" in line.upper())
-                st.metric("Avisos", warn_count)
+                create_metric_card("Avisos", warn_count, "warning")
             
             with col3:
                 info_count = sum(1 for line in display_lines if "INFO" in line.upper())
-                st.metric("Info", info_count)
+                create_metric_card("Info", info_count, "info")
             
             with col4:
-                st.metric("Linhas", len(display_lines))
+                create_metric_card("Linhas", len(display_lines), "format_list_numbered")
             
         else:
             st.info("Nenhuma linha encontrada com os filtros aplicados.")

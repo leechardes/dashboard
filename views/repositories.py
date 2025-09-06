@@ -3,6 +3,7 @@ import os
 import subprocess
 import glob
 from utils.git_utils import scan_git_repositories, get_repo_info, get_repo_status
+from components.metrics import create_metric_card
 from collections import defaultdict
 
 @st.cache_data(ttl=300)  # Cache for 5 minutes
@@ -288,14 +289,14 @@ def run():
     stat_cols = st.columns(6)
     
     with stat_cols[0]:
-        st.metric("Total", len(repos))
+        create_metric_card("Total", str(len(repos)), "source")
     
     # Count by category
     categories = categorize_repositories(repos)
     for i, (cat_key, cat_info) in enumerate(categories.items(), 1):
         if i < len(stat_cols):
             with stat_cols[i]:
-                st.metric(f"{cat_info['name']}", len(cat_info['repos']))
+                create_metric_card(cat_info['name'], str(len(cat_info['repos'])), cat_info['icon'])
     
     st.markdown("---")
     

@@ -7,6 +7,7 @@ import json
 import time
 from datetime import datetime
 from pathlib import Path
+from components.metrics import create_metric_card
 
 def run_command(cmd, shell=True, capture_output=True):
     """Run a shell command and return the result"""
@@ -137,19 +138,19 @@ def run():
         
         with col1:
             if status["active"]:
-                st.metric("Status", "Ativo")
+                create_metric_card("Status", "Ativo", "check_circle")
             else:
-                st.metric("Status", "Inativo")
+                create_metric_card("Status", "Inativo", "cancel")
         
         with col2:
-            st.metric("PID", status["pid"] or "N/A")
+            create_metric_card("PID", status["pid"] or "N/A", "tag")
         
         with col3:
-            st.metric("Memória", status["memory"] or "N/A")
+            create_metric_card("Memória", status["memory"] or "N/A", "memory")
         
         with col4:
             port = load_env_config().get("STREAMLIT_SERVER_PORT", "8081")
-            st.metric("Porta", port)
+            create_metric_card("Porta", port, "lan")
         
         # Show detailed status
         with st.expander("Status Detalhado"):
@@ -172,7 +173,7 @@ def run():
         
         with col1:
             if st.button(":material/play_arrow: Iniciar", key="start_service", width='stretch'):
-                with st.spinner("Starting service..."):
+                with st.spinner("Iniciando serviço..."):
                     success, stdout, stderr = run_command("sudo systemctl start streamlit-dashboard")
                     if success:
                         st.success("Serviço iniciado com sucesso!")
@@ -184,7 +185,7 @@ def run():
         with col2:
             if st.button(":material/stop: Parar", key="stop_service", width='stretch'):
                 if st.checkbox("Tenho certeza que quero parar o serviço"):
-                    with st.spinner("Stopping service..."):
+                    with st.spinner("Parando serviço..."):
                         success, stdout, stderr = run_command("sudo systemctl stop streamlit-dashboard")
                         if success:
                             st.success("Serviço parado com sucesso!")
@@ -195,7 +196,7 @@ def run():
         
         with col3:
             if st.button(":material/restart_alt: Reiniciar", key="restart_service", width='stretch'):
-                with st.spinner("Restarting service..."):
+                with st.spinner("Reiniciando serviço..."):
                     success, stdout, stderr = run_command("sudo systemctl restart streamlit-dashboard")
                     if success:
                         st.success("Serviço reiniciado com sucesso!")
@@ -206,7 +207,7 @@ def run():
         
         with col4:
             if st.button(":material/cached: Recarregar", key="reload_service", width='stretch'):
-                with st.spinner("Reloading service..."):
+                with st.spinner("Recarregando serviço..."):
                     success, stdout, stderr = run_command("sudo systemctl reload streamlit-dashboard")
                     if success:
                         st.success("Serviço recarregado com sucesso!")
@@ -231,65 +232,65 @@ def run():
             
             if is_enabled:
                 st.success("Início automático ativado")
-                if st.button(":material/block: Disable Auto-start"):
+                if st.button(":material/block: Desabilitar Início Automático"):
                     success, stdout, stderr = run_command("sudo systemctl disable streamlit-dashboard")
                     if success:
-                        st.success("Auto-start disabled")
+                        st.success("Início automático desabilitado")
                         st.rerun()
                     else:
-                        st.error(f"Failed: {stderr}")
+                        st.error(f"Falhou: {stderr}")
             else:
-                st.warning("Auto-start is disabled")
-                if st.button("Enable Auto-start"):
+                st.warning("Início automático está desabilitado")
+                if st.button(":material/power_settings_new: Habilitar Início Automático"):
                     success, stdout, stderr = run_command("sudo systemctl enable streamlit-dashboard")
                     if success:
-                        st.success("Auto-start enabled")
+                        st.success("Início automático habilitado")
                         st.rerun()
                     else:
-                        st.error(f"Failed: {stderr}")
+                        st.error(f"Falhou: {stderr}")
         
         with col2:
-            st.markdown("**Service Installation**")
+            st.markdown("**<span class='material-icons' style='font-size: 1rem; vertical-align: middle;'>inventory_2</span> Instalação do Serviço**", unsafe_allow_html=True)
             
             # Check if service exists
             success, stdout, stderr = run_command("systemctl list-unit-files | grep streamlit-dashboard")
             service_exists = success and "streamlit-dashboard" in stdout
             
             if service_exists:
-                st.success("Service is installed")
-                if st.button("Uninstall Service"):
-                    if st.checkbox("I understand this will remove the service"):
+                st.success("Serviço está instalado")
+                if st.button(":material/delete: Desinstalar Serviço"):
+                    if st.checkbox("Entendo que isso removerá o serviço"):
                         success, stdout, stderr = run_command("cd /srv/projects/shared/dashboard && sudo make uninstall-service")
                         if success:
-                            st.success("Service uninstalled")
+                            st.success("Serviço desinstalado")
                             st.rerun()
                         else:
-                            st.error(f"Failed: {stderr}")
+                            st.error(f"Falhou: {stderr}")
             else:
-                st.warning("Service not installed")
+                st.warning("Serviço não instalado")
                 if st.button(":material/inventory_2: Install Service"):
                     success, stdout, stderr = run_command("cd /srv/projects/shared/dashboard && sudo make install-service")
                     if success:
-                        st.success("Service installed successfully!")
+                        st.success("Serviço instalado com sucesso!")
                         st.rerun()
                     else:
-                        st.error(f"Failed: {stderr}")
+                        st.error(f"Falhou: {stderr}")
     
     # Tab 3: Configuration
     with tab3:
-        st.subheader("Service Configuration")
+        st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>tune</span>Configuração do Serviço", unsafe_allow_html=True)
         
         # Load current config
         config = load_env_config()
         
-        st.markdown("### Environment Variables")
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>code</span>Variáveis de Ambiente", unsafe_allow_html=True)
         
         # Port configuration
         col1, col2 = st.columns(2)
         
         with col1:
             new_port = st.number_input(
-                "Server Port",
+                "Porta do Servidor",
                 min_value=1024,
                 max_value=65535,
                 value=int(config.get("STREAMLIT_SERVER_PORT", "8081")),
@@ -298,34 +299,34 @@ def run():
         
         with col2:
             new_address = st.text_input(
-                "Server Address",
+                "Endereço do Servidor",
                 value=config.get("STREAMLIT_SERVER_ADDRESS", "0.0.0.0"),
                 key="config_address"
             )
         
         # Project paths
-        st.markdown("### Project Paths")
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>folder</span>Caminhos do Projeto", unsafe_allow_html=True)
         
         project_root = st.text_input(
-            "Project Root",
+            "Raiz do Projeto",
             value=config.get("PROJECT_ROOT", "/srv/projects"),
             key="config_project_root"
         )
         
         docs_path = st.text_input(
-            "Documentation Path",
+            "Caminho da Documentação",
             value=config.get("DOCS_PATH", "/srv/projects"),
             key="config_docs_path"
         )
         
         logs_path = st.text_input(
-            "Logs Path",
+            "Caminho dos Logs",
             value=config.get("LOGS_PATH", "/var/log"),
             key="config_logs_path"
         )
         
         # Save button
-        if st.button("Save Configuration", type="primary"):
+        if st.button(":material/save: Salvar Configuração", type="primary"):
             # Update config
             config["STREAMLIT_SERVER_PORT"] = str(new_port)
             config["STREAMLIT_SERVER_ADDRESS"] = new_address
@@ -335,54 +336,54 @@ def run():
             
             # Save to file
             if save_env_config(config):
-                st.success("Configuration saved successfully!")
-                st.warning("You need to restart the service for changes to take effect")
+                st.success("Configuração salva com sucesso!")
+                st.warning("Você precisa reiniciar o serviço para que as mudanças tenham efeito")
                 
                 # Offer to restart
                 if st.button(":material/refresh: Restart Service Now"):
                     success, stdout, stderr = run_command("sudo systemctl restart streamlit-dashboard")
                     if success:
-                        st.success("Service restarted with new configuration!")
+                        st.success("Serviço reiniciado com a nova configuração!")
                         time.sleep(2)
                         st.rerun()
                     else:
-                        st.error(f"Failed to restart: {stderr}")
+                        st.error(f"Falha ao reiniciar: {stderr}")
             else:
-                st.error("Failed to save configuration")
+                st.error("Falha ao salvar configuração")
         
         # Show current config file
-        with st.expander("View .env File"):
+        with st.expander("Visualizar arquivo .env"):
             if os.path.exists("/srv/projects/shared/dashboard/.env"):
                 with open("/srv/projects/shared/dashboard/.env", 'r') as f:
                     st.code(f.read())
         
         # Show service file
-        with st.expander("View Service File"):
+        with st.expander("Visualizar arquivo do Serviço"):
             service_file = "/etc/systemd/system/streamlit-dashboard.service"
             if os.path.exists(service_file):
                 success, stdout, stderr = run_command(f"cat {service_file}")
                 if success:
                     st.code(stdout)
             else:
-                st.warning("Service file not found. Service may not be installed.")
+                st.warning("Arquivo do serviço não encontrado. O serviço pode não estar instalado.")
     
     # Tab 4: Logs
     with tab4:
-        st.subheader("Service Logs")
+        st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>description</span>Logs do Serviço", unsafe_allow_html=True)
         
         # Log source selection
         col1, col2, col3 = st.columns(3)
         
         with col1:
             log_source = st.selectbox(
-                "Log Source",
-                ["Service Logs (journalctl)", "Application Logs (streamlit.log)"],
+                "Fonte dos Logs",
+                ["Logs do Serviço (journalctl)", "Logs da Aplicação (streamlit.log)"],
                 key="log_source"
             )
         
         with col2:
             log_lines = st.number_input(
-                "Number of Lines",
+                "Número de Linhas",
                 min_value=10,
                 max_value=1000,
                 value=100,
@@ -395,10 +396,10 @@ def run():
                 st.rerun()
         
         # Auto-refresh option
-        auto_refresh = st.checkbox("Auto-refresh logs every 5 seconds", key="auto_refresh_logs")
+        auto_refresh = st.checkbox("Atualizar logs automaticamente a cada 5 segundos", key="auto_refresh_logs")
         
         if auto_refresh:
-            st.info("Auto-refresh is enabled. Logs will update every 5 seconds.")
+            st.info("Atualização automática ativada. Os logs serão atualizados a cada 5 segundos.")
             time.sleep(5)
             st.rerun()
         
@@ -412,48 +413,48 @@ def run():
             # Color code log levels
             log_container = st.container()
             with log_container:
-                st.code(stdout or "No logs available", language="log")
+                st.code(stdout or "Nenhum log disponível", language="log")
         else:
-            st.error(f"Failed to retrieve logs: {stderr}")
+            st.error(f"Falha ao obter logs: {stderr}")
         
         # Log management
         st.markdown("---")
-        st.markdown("### Log Management")
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>manage_history</span>Gerenciamento de Logs", unsafe_allow_html=True)
         
         col1, col2, col3 = st.columns(3)
         
         with col1:
             if st.button(":material/cleaning_services: Clear Application Logs"):
-                if st.checkbox("I want to clear the logs"):
+                if st.checkbox("Quero limpar os logs"):
                     log_file = "/srv/projects/shared/dashboard/streamlit.log"
                     if os.path.exists(log_file):
                         with open(log_file, 'w') as f:
                             f.write(f"Logs cleared at {datetime.now()}\n")
-                        st.success("Application logs cleared")
+                        st.success("Logs da aplicação limpos")
                     else:
-                        st.warning("Log file not found")
+                        st.warning("Arquivo de log não encontrado")
         
         with col2:
-            if st.button("Download Logs"):
+            if st.button(":material/download: Baixar Logs"):
                 success, stdout, stderr = get_logs(lines=1000, service=use_service_logs)
                 if success:
                     st.download_button(
-                        label="Download",
+                        label=":material/download: Baixar",
                         data=stdout,
                         file_name=f"dashboard_logs_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log",
                         mime="text/plain"
                     )
         
         with col3:
-            if st.button("Search in Logs"):
-                search_term = st.text_input("Search term:")
+            if st.button(":material/search: Buscar nos Logs"):
+                search_term = st.text_input("Termo de busca:")
                 if search_term:
                     success, stdout, stderr = get_logs(lines=500, service=use_service_logs)
                     if success:
                         lines = stdout.splitlines()
                         matching_lines = [line for line in lines if search_term.lower() in line.lower()]
                         if matching_lines:
-                            st.success(f"Found {len(matching_lines)} matching lines:")
+                            st.success(f"Encontradas {len(matching_lines)} linhas correspondentes:")
                             st.code("\n".join(matching_lines))
                         else:
-                            st.warning("No matching lines found")
+                            st.warning("Nenhuma linha correspondente encontrada")

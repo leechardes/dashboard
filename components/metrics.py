@@ -234,13 +234,13 @@ def create_trend_metric(title, values, labels=None, icon="analytics"):
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.metric("Atual", f"{values[-1]:.1f}")
+        create_metric_card("Atual", f"{values[-1]:.1f}", "analytics")
     
     with col2:
         st.markdown(f"**Tendência:** {trend}", unsafe_allow_html=True)
     
     with col3:
-        st.metric("Mudança", f"{change:+.1f}")
+        create_metric_card("Mudança", f"{change:+.1f}", "trending_up")
     
     # Create simple line chart
     if labels and len(labels) == len(values):

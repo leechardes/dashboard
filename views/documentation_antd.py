@@ -14,6 +14,7 @@ from utils.file_scanner import (
 )
 from utils.agent_scanner import AgentScanner
 from components.markdown_viewer import render_markdown_file, create_toc
+from components.metrics import create_metric_card
 from collections import defaultdict
 
 # Initialize agent scanner
@@ -122,39 +123,39 @@ def render_agent_metrics():
     col1, col2, col3, col4, col5 = st.columns(5)
     
     with col1:
-        st.metric(
-            "Total de Projetos",
-            total_stats['total_projects'],
-            delta=f"{total_stats['projects_complete']} completos"
+        create_metric_card(
+            "Total de Projetos", 
+            str(total_stats['total_projects']), 
+            "folder"
         )
     
     with col2:
-        st.metric(
-            "Total de Arquivos",
-            total_stats['total_files']
+        create_metric_card(
+            "Total de Arquivos", 
+            str(total_stats['total_files']), 
+            "description"
         )
     
     with col3:
-        st.metric(
-            "Arquivos Verificados",
-            total_stats['verified_files'],
-            delta=f"{total_stats['verified_files']/total_stats['total_files']*100:.1f}%" if total_stats['total_files'] > 0 else "0%"
+        create_metric_card(
+            "Arquivos Verificados", 
+            str(total_stats['verified_files']), 
+            "verified"
         )
     
     with col4:
-        st.metric(
-            "Arquivos Pendentes",
-            total_stats['pending_files'],
-            delta="-" + str(total_stats['pending_files']) if total_stats['pending_files'] > 0 else "OK",
-            delta_color="inverse"
+        create_metric_card(
+            "Arquivos Pendentes", 
+            str(total_stats['pending_files']), 
+            "pending"
         )
     
     with col5:
         overall_completion = (total_stats['verified_files'] / total_stats['total_files'] * 100) if total_stats['total_files'] > 0 else 0
-        st.metric(
-            "Progresso Geral",
-            f"{overall_completion:.1f}%",
-            delta="Completo" if overall_completion == 100 else f"{100-overall_completion:.1f}% restantes"
+        create_metric_card(
+            "Progresso Geral", 
+            f"{overall_completion:.1f}%", 
+            "analytics"
         )
     
     # Create visualizations
@@ -445,19 +446,19 @@ def run():
         stat_cols = st.columns(6)
         
         with stat_cols[0]:
-            st.metric("Total", stats['total'])
+            create_metric_card("Total", str(stats['total']), "description")
     
-    with stat_cols[1]:
-        st.metric("Projetos", len(stats['by_project']))
+        with stat_cols[1]:
+            create_metric_card("Projetos", str(len(stats['by_project'])), "folder")
     
-    with stat_cols[2]:
-        st.metric("Categorias", len(stats['by_category']))
+        with stat_cols[2]:
+            create_metric_card("Categorias", str(len(stats['by_category'])), "category")
     
-    with stat_cols[3]:
-        st.metric("Tipos", len(stats['by_type']))
+        with stat_cols[3]:
+            create_metric_card("Tipos", str(len(stats['by_type'])), "label")
     
-    with stat_cols[4]:
-        st.metric("Tamanho", f"{stats['total_size_mb']:.1f} MB")
+        with stat_cols[4]:
+            create_metric_card("Tamanho", f"{stats['total_size_mb']:.1f} MB", "storage")
     
     with stat_cols[5]:
         if st.button(":material/refresh: Atualizar"):
@@ -553,7 +554,7 @@ def run():
                 st.warning("Nenhum documento encontrado com os filtros aplicados.")
     
     with content_col:
-        st.markdown("### Visualização")
+        st.markdown("### <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>visibility</span>Visualização", unsafe_allow_html=True)
         
         # Check if a document is selected
         if 'selected_doc' in st.session_state and st.session_state.get('show_inline', False):

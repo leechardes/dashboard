@@ -6,6 +6,7 @@ from pygments import highlight
 from pygments.lexers import get_lexer_by_name, guess_lexer
 from pygments.formatters import HtmlFormatter
 from pygments.util import ClassNotFound
+from components.metrics import create_metric_card
 
 def render_markdown_file(file_path):
     """Render a markdown file with syntax highlighting"""
@@ -443,17 +444,17 @@ def display_markdown_stats(stats):
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.metric("Caracteres", f"{stats['characters']:,}")
-        st.metric("Palavras", f"{stats['words']:,}")
+        create_metric_card("Caracteres", f"{stats['characters']:,}", "text_fields")
+        create_metric_card("Palavras", f"{stats['words']:,}", "spellcheck")
     
     with col2:
-        st.metric("Linhas", f"{stats['lines']:,}")
-        st.metric("Cabeçalhos", stats['headers'])
+        create_metric_card("Linhas", f"{stats['lines']:,}", "format_list_numbered")
+        create_metric_card("Cabeçalhos", str(stats['headers']), "title")
     
     with col3:
-        st.metric("Links", stats['links'])
-        st.metric("Imagens", stats['images'])
+        create_metric_card("Links", str(stats['links']), "link")
+        create_metric_card("Imagens", str(stats['images']), "image")
     
     with col4:
-        st.metric("Blocos de Código", stats['code_blocks'])
-        st.metric("Tabelas", stats['tables'])
+        create_metric_card("Blocos de Código", str(stats['code_blocks']), "code")
+        create_metric_card("Tabelas", str(stats['tables']), "table_chart")
