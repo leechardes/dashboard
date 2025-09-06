@@ -89,6 +89,96 @@ def run():
         autostart_color = "var(--success-color)" if autostart else "var(--warning-color)"
         create_metric_card("Auto-Início", autostart_label, "power_settings_new", autostart_color)
     
+    # Seção de configuração OpenVPN
+    st.markdown("---")
+    st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>vpn_key</span>Configuração OpenVPN", unsafe_allow_html=True)
+    
+    with st.expander("⚙️ Configurar Credenciais e Arquivo OpenVPN"):
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("### Credenciais de Autenticação")
+            vpn_username = st.text_input("Usuário VPN", key="vpn_username", help="Usuário para autenticação no servidor VPN")
+            vpn_password = st.text_input("Senha VPN", type="password", key="vpn_password", help="Senha para autenticação no servidor VPN")
+            
+            if st.button(":material/save: Salvar Credenciais", use_container_width=True):
+                if vpn_username and vpn_password:
+                    # Salvar credenciais em arquivo seguro
+                    auth_file = Path("/etc/openvpn/client-auth.txt")
+                    try:
+                        # Criar conteúdo do arquivo auth
+                        auth_content = f"{vpn_username}\n{vpn_password}\n"
+                        
+                        # Salvar usando subprocess com sudo
+                        import subprocess
+                        process = subprocess.Popen(
+                            ['sudo', 'tee', str(auth_file)],
+                            stdin=subprocess.PIPE,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            text=True
+                        )
+                        stdout, stderr = process.communicate(auth_content)
+                        
+                        if process.returncode == 0:
+                            # Definir permissões seguras
+                            subprocess.run(['sudo', 'chmod', '600', str(auth_file)], check=True)
+                            subprocess.run(['sudo', 'chown', 'root:root', str(auth_file)], check=True)
+                            st.success("✅ Credenciais salvas com sucesso!")
+                            
+                            # Atualizar configuração para usar o arquivo de auth
+                            vpn_manager.update_auth_config(str(auth_file))
+                        else:
+                            st.error(f"Erro ao salvar credenciais: {stderr}")
+                    except Exception as e:
+                        st.error(f"Erro ao salvar credenciais: {str(e)}")
+                else:
+                    st.warning("Por favor, preencha usuário e senha")
+        
+        with col2:
+            st.markdown("### Arquivo de Configuração")
+            
+            # Mostrar arquivo atual
+            current_config = vpn_manager.get_config_file()
+            st.info(f"**Arquivo atual:** {current_config}")
+            
+            # Upload de novo arquivo .ovpn
+            uploaded_file = st.file_uploader(
+                "Fazer upload de arquivo .ovpn",
+                type=['ovpn'],
+                help="Selecione um arquivo de configuração OpenVPN (.ovpn)"
+            )
+            
+            if uploaded_file is not None:
+                if st.button(":material/upload: Aplicar Configuração", use_container_width=True):
+                    try:
+                        # Ler conteúdo do arquivo
+                        ovpn_content = uploaded_file.read().decode('utf-8')
+                        
+                        # Adicionar linha para usar arquivo de autenticação
+                        if 'auth-user-pass' in ovpn_content and 'auth-user-pass ' not in ovpn_content:
+                            ovpn_content = ovpn_content.replace('auth-user-pass', 'auth-user-pass /etc/openvpn/client-auth.txt')
+                        
+                        # Salvar arquivo de configuração
+                        config_path = Path("/etc/openvpn/client.conf")
+                        process = subprocess.Popen(
+                            ['sudo', 'tee', str(config_path)],
+                            stdin=subprocess.PIPE,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            text=True
+                        )
+                        stdout, stderr = process.communicate(ovpn_content)
+                        
+                        if process.returncode == 0:
+                            subprocess.run(['sudo', 'chmod', '644', str(config_path)], check=True)
+                            st.success(f"✅ Configuração '{uploaded_file.name}' aplicada com sucesso!")
+                            st.info("Reinicie o serviço VPN para aplicar as mudanças")
+                        else:
+                            st.error(f"Erro ao salvar configuração: {stderr}")
+                    except Exception as e:
+                        st.error(f"Erro ao processar arquivo: {str(e)}")
+    
     # Seção de controle do serviço
     st.markdown("---")
     st.markdown("## <span class='material-icons' style='vertical-align: middle; margin-right: 0.5rem;'>settings</span>Controle do Serviço", unsafe_allow_html=True)

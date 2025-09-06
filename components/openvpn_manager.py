@@ -277,6 +277,57 @@ class OpenVPNManager:
             print(f"Erro ao obter informações da conexão: {e}")
             return {}
     
+    def get_config_file(self):
+        """Retorna o caminho do arquivo de configuração atual"""
+        config_path = Path("/etc/openvpn/client.conf")
+        if config_path.exists():
+            return str(config_path)
+        # Tentar encontrar arquivo .ovpn no diretório
+        ovpn_files = list(Path("/etc/openvpn").glob("*.ovpn"))
+        if ovpn_files:
+            return str(ovpn_files[0])
+        return "Nenhum arquivo configurado"
+    
+    def update_auth_config(self, auth_file_path):
+        """Atualiza a configuração para usar o arquivo de autenticação"""
+        try:
+            config_path = Path("/etc/openvpn/client.conf")
+            if config_path.exists():
+                # Ler configuração atual
+                with open(config_path, 'r') as f:
+                    content = f.read()
+                
+                # Atualizar linha auth-user-pass
+                import re
+                # Se já tem um caminho, substituir
+                if 'auth-user-pass ' in content:
+                    content = re.sub(
+                        r'auth-user-pass.*',
+                        f'auth-user-pass {auth_file_path}',
+                        content
+                    )
+                # Se não tem caminho, adicionar
+                else:
+                    content = content.replace(
+                        'auth-user-pass',
+                        f'auth-user-pass {auth_file_path}'
+                    )
+                
+                # Salvar configuração atualizada
+                process = subprocess.Popen(
+                    ['sudo', 'tee', str(config_path)],
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True
+                )
+                process.communicate(content)
+                
+                return True
+        except Exception as e:
+            print(f"Erro ao atualizar configuração: {e}")
+            return False
+    
     def enable_autostart(self):
         """Habilita início automático do serviço"""
         try:

@@ -3,18 +3,9 @@
     "ip": "10.0.10.1",
     "port": 22,
     "user": "admin",
-    "password": "",
+    "password": "cwTS6FbVs7GNxBRXAigfgaGLWILMdEfv",
     "enabled": true,
-    "last_sync": null,
-    "description": "MikroTik da residência"
-  },
-  "Escritório": {
-    "ip": "10.0.20.1",
-    "port": 22,
-    "user": "admin",
-    "password": "",
-    "enabled": true,
-    "last_sync": null,
-    "description": "MikroTik do escritório"
+    "last_sync": "2025-09-06T09:34:35.322045",
+    "description": "Mikrotik Casa"
   }
 }
